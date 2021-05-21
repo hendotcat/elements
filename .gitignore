@@ -1,0 +1,5 @@
+.DS_Store
+/elements.d.ts
+/elements.js
+/node_modules/
+/yarn-error.log

@@ -1,0 +1,32 @@
+{
+  "name": "@hendotcat/elements",
+  "description": "React component library",
+  "version": "0.0.0",
+  "license": "MIT",
+  "homepage": "https://github.com/hendotcat/elements",
+  "author": {
+    "name": "Henry Catalini Smith",
+    "email": "smith@hen.cat",
+    "url": "https://hen.cat/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hendotcat/elements.git"
+  },
+  "devDependencies": {
+    "typescript": "^4.2.4",
+    "react": "^17.0.2"
+  },
+  "peerDependencies": {
+    "react": "^17.0.2"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "files": [
+    "elements.d.ts",
+    "elements.js"
+  ],
+  "main": "elements.js",
+  "types": "elements.d.ts"
+}
