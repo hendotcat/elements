@@ -54,7 +54,7 @@ export type DocumentProps = Partial<GlobalAttributes>
     React.ReactElement<BodyProps>,
   ] | React.ReactElement<BodyProps>>
 
-const LanguageContext = React.createContext<React.MutableRefObject<string>>("")
+const LanguageContext = React.createContext<React.MutableRefObject<string>>(undefined)
 const TitleContext = React.createContext("")
 
 type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
