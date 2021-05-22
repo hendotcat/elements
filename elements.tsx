@@ -25,6 +25,13 @@ export interface GlobalAttributes {
   lang: Language
 }
 
+export type HeadProps = Partial<GlobalAttributes>
+export type BodyProps = Partial<GlobalAttributes>
+
+export interface Children<Type = React.ReactElement> {
+  children?: Type
+}
+
 /**
  * The <html> tag requires a "lang" property for accessibility reasons.
  *
@@ -36,13 +43,21 @@ export interface GlobalAttributes {
  */
 export type DocumentRequirements = "lang"
 
-export type DocumentProps = Partial<GlobalAttributes> & Required<
-  Pick<GlobalAttributes, DocumentRequirements>
->
+export type DocumentProps = Partial<GlobalAttributes>
+  & Required<Pick<GlobalAttributes, DocumentRequirements>>
+  & Children<[
+    React.ReactElement<HeadProps>,
+    React.ReactElement<BodyProps>,
+  ]>
 
 export function Document(props: DocumentProps): React.ReactElement {
-  return (
-    <html {...props}>
-    </html>
-  )
+  return <html {...props} />
+}
+
+export function Head(props: HeadProps): React.ReactElement {
+  return <head {...props} />
+}
+
+export function Body(props: BodyProps): React.ReactElement {
+  return <body {...props} />
 }

@@ -4,7 +4,7 @@
     "baseUrl": "./",
     "declaration": true,
     "esModuleInterop": true,
-    "lib": ["esnext"],
+    "lib": ["dom", "esnext"],
     "moduleResolution": "node",
     "module": "commonjs",
     "noImplicitUseStrict": true,
@@ -15,7 +15,6 @@
     "target": "esnext"
   },
   "exclude": [
-    "node_modules"
   ],
   "include": [
     "./elements.tsx",
