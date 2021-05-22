@@ -54,9 +54,8 @@ export type DocumentProps = Partial<GlobalAttributes>
     React.ReactElement<BodyProps>,
   ] | React.ReactElement<BodyProps>>
 
-const DocumentContext = React.createContext({
-  title: "",
-})
+const LanguageContext = React.createContext("")
+const TitleContext = React.createContext("")
 
 export function Document(props: DocumentProps): React.ReactElement {
   const { title, ...html } = props
@@ -67,28 +66,30 @@ export function Document(props: DocumentProps): React.ReactElement {
   const bodyOnly = !headAndBody
     && children.type === Body
   return (
-    <DocumentContext.Provider value={{ title }}>
-      <html {...html}>
-        {headAndBody ? (
-          <>{children}</>
-        ) : bodyOnly ? (
-          <>
-            <Head></Head>
-            {props.children}
-          </>
-        ) : (
-          <>
-            <Head></Head>
-            <Body>{props.children}</Body>
-          </>
-        )}
-      </html>
-    </DocumentContext.Provider>
+    <LanguageContext.Provider value={props.lang}>
+      <TitleContext.Provider value={title}>
+        <html {...html}>
+          {headAndBody ? (
+            <>{children}</>
+          ) : bodyOnly ? (
+            <>
+              <Head></Head>
+              {props.children}
+            </>
+          ) : (
+            <>
+              <Head></Head>
+              <Body>{props.children}</Body>
+            </>
+          )}
+        </html>
+      </TitleContext.Provider>
+    </LanguageContext.Provider>
   )
 }
 
 export function Head(props: HeadProps): React.ReactElement {
-  const { title } = React.useContext(DocumentContext)
+  const title = React.useContext(TitleContext)
   return (
     <head {...props}>
       <meta charSet="utf-8" />
