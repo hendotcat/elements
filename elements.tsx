@@ -49,13 +49,45 @@ export type DocumentRequirements = "lang"
 export type DocumentProps = Partial<GlobalAttributes>
   & Required<Pick<GlobalAttributes, DocumentRequirements>>
   & { title: string }
-  & Children<[
+  & Children<React.ReactNode[] | [
     React.ReactElement<HeadProps>,
     React.ReactElement<BodyProps>,
   ] | React.ReactElement<BodyProps>>
 
 const LanguageContext = React.createContext("")
 const TitleContext = React.createContext("")
+
+type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
+
+const HeadingLevelContext = React.createContext<React.MutableRefObject<HeadingLevel>>(undefined)
+
+function HeadingLevelProvider({ children }): React.ReactElement {
+  const level = React.useRef(1 as HeadingLevel)
+  return (
+    <HeadingLevelContext.Provider value={level}>
+      {children}
+    </HeadingLevelContext.Provider>
+  )
+}
+
+export type HeadingProps = Partial<GlobalAttributes> & {
+  children: React.ReactNode
+  level: HeadingLevel
+}
+
+export function Heading(props: HeadingProps): React.ReactElement {
+  const headingLevel = React.useContext(HeadingLevelContext)
+  const { level, ...heading } = props
+  const levelChange = Math.abs(level - headingLevel.current)
+  if (levelChange > 1) {
+    throw new Error(
+      `Heading level ${level} not allowed: previous level is ${headingLevel.current}`
+    )
+  }
+  headingLevel.current = level
+  const element = `h${level}`
+  return React.createElement(element, heading)
+}
 
 export function Document(props: DocumentProps): React.ReactElement {
   const { title, ...html } = props
@@ -66,6 +98,7 @@ export function Document(props: DocumentProps): React.ReactElement {
   const bodyOnly = !headAndBody
     && children.type === Body
   return (
+    <HeadingLevelProvider>
     <LanguageContext.Provider value={props.lang}>
       <TitleContext.Provider value={title}>
         <html {...html}>
@@ -85,6 +118,7 @@ export function Document(props: DocumentProps): React.ReactElement {
         </html>
       </TitleContext.Provider>
     </LanguageContext.Provider>
+    </HeadingLevelProvider>
   )
 }
 
