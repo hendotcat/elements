@@ -88,5 +88,21 @@ describe(`${name}@${version}`, () => {
         </Document>
       )).toThrowErrorMatchingSnapshot()
     })
+
+    it("includes lang attribute if different from document", () => {
+      expect(render(
+        <Document lang="en-US" title="test">
+          <Heading lang="sv-SE">titel</Heading>
+        </Document>
+      )).toMatchSnapshot()
+    })
+
+    it("excludes lang attribute if same as document", () => {
+      expect(render(
+        <Document lang="en-US" title="test">
+          <Heading lang="en-US">title</Heading>
+        </Document>
+      )).toMatchSnapshot()
+    })
   })
 })

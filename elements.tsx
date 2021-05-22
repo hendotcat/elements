@@ -54,7 +54,7 @@ export type DocumentProps = Partial<GlobalAttributes>
     React.ReactElement<BodyProps>,
   ] | React.ReactElement<BodyProps>>
 
-const LanguageContext = React.createContext("")
+const LanguageContext = React.createContext<React.MutableRefObject<string>>("")
 const TitleContext = React.createContext("")
 
 type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
@@ -70,14 +70,35 @@ function HeadingLevelProvider({ children }): React.ReactElement {
   )
 }
 
+function LanguageProvider({ children, lang }): React.ReactElement {
+  const langRef = React.useRef(lang)
+  return (
+    <LanguageContext.Provider value={langRef}>
+      {children}
+    </LanguageContext.Provider>
+  )
+}
+
 export type HeadingProps = Partial<GlobalAttributes> & {
   children: React.ReactNode
   level?: HeadingLevel
 }
 
 export function Heading(props: HeadingProps): React.ReactElement {
+  const langContext = React.useContext(LanguageContext)
   const headingLevel = React.useContext(HeadingLevelContext)
-  const { level: newLevel, ...heading } = props
+
+  const {
+    lang: newLang,
+    level: newLevel,
+    ...heading
+  } = props
+
+  let lang = newLang || langContext.current
+  if (lang !== langContext.current) {
+    (heading as HeadingProps).lang = lang
+  }
+
   const level = newLevel || headingLevel.current
   const levelChange = Math.abs(level - headingLevel.current)
   if (levelChange > 1) {
@@ -85,6 +106,7 @@ export function Heading(props: HeadingProps): React.ReactElement {
       `Heading level ${level} not allowed: previous level is ${headingLevel.current}`
     )
   }
+
   headingLevel.current = level
   const element = `h${level}`
   return React.createElement(element, heading)
@@ -104,7 +126,7 @@ export function Document(props: DocumentProps): React.ReactElement {
     && children?.type === Body
   return (
     <HeadingLevelProvider>
-    <LanguageContext.Provider value={props.lang}>
+    <LanguageProvider lang={props.lang}>
       <TitleContext.Provider value={title}>
         <html {...html}>
           {emptyBody ? (
@@ -132,7 +154,7 @@ export function Document(props: DocumentProps): React.ReactElement {
           )}
         </html>
       </TitleContext.Provider>
-    </LanguageContext.Provider>
+    </LanguageProvider>
     </HeadingLevelProvider>
   )
 }
