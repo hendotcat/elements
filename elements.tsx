@@ -72,12 +72,13 @@ function HeadingLevelProvider({ children }): React.ReactElement {
 
 export type HeadingProps = Partial<GlobalAttributes> & {
   children: React.ReactNode
-  level: HeadingLevel
+  level?: HeadingLevel
 }
 
 export function Heading(props: HeadingProps): React.ReactElement {
   const headingLevel = React.useContext(HeadingLevelContext)
-  const { level, ...heading } = props
+  const { level: newLevel, ...heading } = props
+  const level = newLevel || headingLevel.current
   const levelChange = Math.abs(level - headingLevel.current)
   if (levelChange > 1) {
     throw new Error(
