@@ -61,12 +61,17 @@ const DocumentContext = React.createContext({
 export function Document(props: DocumentProps): React.ReactElement {
   const { title, ...html } = props
   const children: any = props.children
+  const headAndBody = children.length === 2
+    && children[0].type === Head
+    && children[1].type === Body 
+  const bodyOnly = !headAndBody
+    && children.type === Body
   return (
     <DocumentContext.Provider value={{ title }}>
       <html {...html}>
-        {children.length === 2 && children[0].type === Head && children[1].type === Body ? (
+        {headAndBody ? (
           <>{children}</>
-        ) : children.type === Body ? (
+        ) : bodyOnly ? (
           <>
             <Head></Head>
             {props.children}
