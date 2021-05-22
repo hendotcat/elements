@@ -25,12 +25,15 @@ export interface GlobalAttributes {
   lang: Language
 }
 
-export type HeadProps = Partial<GlobalAttributes>
-export type BodyProps = Partial<GlobalAttributes>
-
 export interface Children<Type = React.ReactElement> {
   children?: Type
 }
+
+export type HeadProps = Partial<GlobalAttributes>
+  & Children<React.ReactNode>
+
+export type BodyProps = Partial<GlobalAttributes>
+  & Children<React.ReactNode>
 
 /**
  * The <html> tag requires a "lang" property for accessibility reasons.
@@ -45,17 +48,49 @@ export type DocumentRequirements = "lang"
 
 export type DocumentProps = Partial<GlobalAttributes>
   & Required<Pick<GlobalAttributes, DocumentRequirements>>
+  & { title: string }
   & Children<[
     React.ReactElement<HeadProps>,
     React.ReactElement<BodyProps>,
-  ]>
+  ] | React.ReactElement<BodyProps>>
+
+const DocumentContext = React.createContext({
+  title: "",
+})
 
 export function Document(props: DocumentProps): React.ReactElement {
-  return <html {...props} />
+  const { title, ...html } = props
+  const children: any = props.children
+  return (
+    <DocumentContext.Provider value={{ title }}>
+      <html {...html}>
+        {children.length === 2 && children[0].type === Head && children[1].type === Body ? (
+          <>{children}</>
+        ) : children.type === Body ? (
+          <>
+            <Head></Head>
+            {props.children}
+          </>
+        ) : (
+          <>
+            <Head></Head>
+            <Body>{props.children}</Body>
+          </>
+        )}
+      </html>
+    </DocumentContext.Provider>
+  )
 }
 
 export function Head(props: HeadProps): React.ReactElement {
-  return <head {...props} />
+  const { title } = React.useContext(DocumentContext)
+  return (
+    <head {...props}>
+      <meta charSet="utf-8" />
+      <title>{ title }</title>
+      {props.children}
+    </head>
+  )
 }
 
 export function Body(props: BodyProps): React.ReactElement {
