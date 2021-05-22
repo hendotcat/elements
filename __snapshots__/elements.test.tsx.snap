@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`@hendotcat/elements@0.0.0 <Document /> renders <Body> children as body contents 1`] = `
+"
+<html lang=\\"en-US\\">
+  <head>
+    <meta charset=\\"utf-8\\">
+    <title>test</title>
+  </head>
+  <body>
+    <h1>title</h1>
+  </body>
+</html>
+"
+`;
+
+exports[`@hendotcat/elements@0.0.0 <Document /> renders a valid document given the bare minimum input 1`] = `
+"
+<html lang=\\"en-US\\">
+  <head>
+    <meta charset=\\"utf-8\\">
+    <title>test</title>
+  </head>
+  <body></body>
+</html>
+"
+`;
+
+exports[`@hendotcat/elements@0.0.0 <Document /> renders custom header metadata 1`] = `
+"
+<html lang=\\"en-US\\">
+  <head>
+    <meta charset=\\"utf-8\\">
+    <title>test</title>
+    <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1\\">
+  </head>
+  <body></body>
+</html>
+"
+`;
+
+exports[`@hendotcat/elements@0.0.0 <Document /> treats bare children as body contents 1`] = `
+"
+<html lang=\\"en-US\\">
+  <head>
+    <meta charset=\\"utf-8\\">
+    <title>test</title>
+  </head>
+  <body>
+    <h1>title</h1>
+  </body>
+</html>
+"
+`;

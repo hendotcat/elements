@@ -93,18 +93,32 @@ export function Heading(props: HeadingProps): React.ReactElement {
 export function Document(props: DocumentProps): React.ReactElement {
   const { title, ...html } = props
   const children: any = props.children
-  const headAndBody = children.length === 2
+  const emptyBody = children === undefined
+  const headAndBody = !emptyBody
+    && children.length === 2
     && children[0].type === Head
     && children[1].type === Body 
+  const headOnly = !headAndBody
+    && children?.type === Head
   const bodyOnly = !headAndBody
-    && children.type === Body
+    && children?.type === Body
   return (
     <HeadingLevelProvider>
     <LanguageContext.Provider value={props.lang}>
       <TitleContext.Provider value={title}>
         <html {...html}>
-          {headAndBody ? (
+          {emptyBody ? (
+            <>
+              <Head></Head>
+              <Body>{" "}</Body>
+            </>
+          ) : headAndBody ? (
             <>{children}</>
+          ) : headOnly ? (
+            <>
+              {props.children}
+              <Body>{" "}</Body>
+            </>
           ) : bodyOnly ? (
             <>
               <Head></Head>
