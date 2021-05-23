@@ -4,6 +4,8 @@ export type HeadProps = React.HTMLAttributes<HTMLHeadElement>
 
 export type BodyProps = React.HTMLAttributes<HTMLBodyElement>
 
+export type SpanProps = React.HTMLAttributes<HTMLSpanElement>
+
 /**
  * The <html> tag requires a "lang" property for accessibility reasons.
  *
@@ -43,24 +45,37 @@ function LanguageProvider({ children, lang }): React.ReactElement {
   )
 }
 
+const withLanguage = Component => props => {
+  const langContext = React.useContext(LanguageContext)
+  const { lang, children, ...rest } = props
+
+  if (lang === langContext.current) {
+    return <Component {...rest} />
+  } else if (children) {
+    return (
+      <Component {...rest} lang={lang}>
+        <LanguageProvider lang={lang}>
+          {children}
+        </LanguageProvider>
+      </Component>
+    )
+  } else {
+    return <Component {...rest} lang={lang} />
+  }
+}
+
 export type HeadingProps = React.HTMLAttributes<HTMLHeadingElement> & {
   level?: HeadingLevel
 }
 
-export function Heading(props: HeadingProps): React.ReactElement {
+export const Heading: React.FC<HeadingProps> = withLanguage(props => {
   const langContext = React.useContext(LanguageContext)
   const headingLevel = React.useContext(HeadingLevelContext)
 
   const {
-    lang: newLang,
     level: newLevel,
     ...heading
   } = props
-
-  let lang = newLang || langContext.current
-  if (lang !== langContext.current) {
-    (heading as HeadingProps).lang = lang
-  }
 
   const level = newLevel || headingLevel.current
   const levelChange = Math.abs(level - headingLevel.current)
@@ -71,11 +86,11 @@ export function Heading(props: HeadingProps): React.ReactElement {
   }
 
   headingLevel.current = level
-  const element = `h${level}`
-  return React.createElement(element, heading)
-}
+  const Element = `h${level}`
+  return <Element {...heading} />
+})
 
-export function Document(props: DocumentProps): React.ReactElement {
+export const Document: React.FC<DocumentProps> = props => {
   const { title, ...html } = props
   const children: any = props.children
   const emptyBody = children === undefined
@@ -122,7 +137,7 @@ export function Document(props: DocumentProps): React.ReactElement {
   )
 }
 
-export function Head(props: HeadProps): React.ReactElement {
+export const Head: React.FC<HeadProps> = props => {
   const title = React.useContext(TitleContext)
   return (
     <head {...props}>
@@ -133,6 +148,10 @@ export function Head(props: HeadProps): React.ReactElement {
   )
 }
 
-export function Body(props: BodyProps): React.ReactElement {
+export const Body: React.FC<BodyProps> = props => {
   return <body {...props} />
 }
+
+export const Span: React.FC<SpanProps> = withLanguage(props => {
+  return <span {...props} />
+})

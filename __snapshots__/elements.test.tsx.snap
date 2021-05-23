@@ -77,34 +77,6 @@ exports[`@hendotcat/elements@0.0.0 <Heading /> allows heading level changes of u
 "
 `;
 
-exports[`@hendotcat/elements@0.0.0 <Heading /> excludes lang attribute if same as document 1`] = `
-"
-<html lang=\\"en-US\\">
-  <head>
-    <meta charset=\\"utf-8\\">
-    <title>test</title>
-  </head>
-  <body>
-    <h1>title</h1>
-  </body>
-</html>
-"
-`;
-
-exports[`@hendotcat/elements@0.0.0 <Heading /> includes lang attribute if different from document 1`] = `
-"
-<html lang=\\"en-US\\">
-  <head>
-    <meta charset=\\"utf-8\\">
-    <title>test</title>
-  </head>
-  <body>
-    <h1 lang=\\"sv-SE\\">titel</h1>
-  </body>
-</html>
-"
-`;
-
 exports[`@hendotcat/elements@0.0.0 <Heading /> rejects heading level changes of more than 1 1`] = `"Heading level 3 not allowed: previous level is 1"`;
 
 exports[`@hendotcat/elements@0.0.0 <Heading /> renders a <h1> by default 1`] = `

@@ -1,16 +1,24 @@
+import { select } from "hast-util-select"
 import React from "react"
-import ReactDOM from "react-dom/server"
+import ReactDOMServer from "react-dom/server"
 import rehype from "rehype"
-import format from "rehype-format"
+import rehypeDomParse from "rehype-dom-parse"
+import rehypeFormat from "rehype-format"
+import unified from "unified"
 import { name, version } from "./package.json"
-import { Body, Document, Head, Heading } from "./elements"
+import { Body, Document, Head, Heading, Span } from "./elements"
 
 function render(component: any): string {
-  let html = ReactDOM.renderToString(component)
-  const processor = rehype()
-  processor.use(format)
-  html = processor.processSync(html).toString()
-  return html
+  return rehype()
+    .use(rehypeFormat)
+    .processSync(ReactDOMServer.renderToString(component))
+    .toString()
+}
+
+function parse(html: string): any {
+  return unified()
+    .use(rehypeDomParse, { fragment: false })
+    .parse(html)
 }
 
 describe(`${name}@${version}`, () => {
@@ -88,21 +96,45 @@ describe(`${name}@${version}`, () => {
         </Document>
       )).toThrowErrorMatchingSnapshot()
     })
+  })
 
+  describe("<LanguageProvider />", () => {
     it("includes lang attribute if different from document", () => {
-      expect(render(
+      const html = render(
         <Document lang="en-US" title="test">
           <Heading lang="sv-SE">titel</Heading>
         </Document>
-      )).toMatchSnapshot()
+      )
+      const tree = parse(html)
+      expect(select("html[lang='en-US']", tree)).toBeTruthy()
+      expect(select("h1[lang='sv-SE']", tree)).toBeTruthy()
     })
 
     it("excludes lang attribute if same as document", () => {
-      expect(render(
+      const html = render(
         <Document lang="en-US" title="test">
           <Heading lang="en-US">title</Heading>
         </Document>
-      )).toMatchSnapshot()
+      )
+      const tree = parse(html)
+      expect(select("html[lang='en-US']", tree)).toBeTruthy()
+      expect(select("h1:not([lang='en-US'])", tree)).toBeTruthy()
+    })
+
+    it("includes lang attribute if different from parent", async () => {
+      const html = render(
+        <Document lang="en-US" title="test">
+          <Heading lang="sv-SE">
+            <Span lang="en-US">
+              title
+            </Span>
+          </Heading>
+        </Document>,
+      )
+      const tree = parse(html)
+      expect(select("html[lang='en-US']", tree)).toBeTruthy()
+      expect(select("h1[lang='sv-SE']", tree)).toBeTruthy()
+      expect(select("span[lang='en-US']", tree)).toBeTruthy()
     })
   })
 })
