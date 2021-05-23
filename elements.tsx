@@ -1,39 +1,8 @@
 import React from "react"
 
-/**
- * Denotes the directionality of an element's text
- *
- * https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir
- */
-type Directionality = "auto" | "ltr" | "rtl"
+export type HeadProps = React.HTMLAttributes<HTMLHeadElement>
 
-/**
- * Denotes the language of an element's text
- *
- * https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang
- */
-type Language = string
-
-/**
- * Global attributes are attributes common to all HTML elements
- *
- * https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes
- */
-export interface GlobalAttributes {
-  className: string
-  dir: Directionality
-  lang: Language
-}
-
-export interface Children<Type = React.ReactElement> {
-  children?: Type
-}
-
-export type HeadProps = Partial<GlobalAttributes>
-  & Children<React.ReactNode>
-
-export type BodyProps = Partial<GlobalAttributes>
-  & Children<React.ReactNode>
+export type BodyProps = React.HTMLAttributes<HTMLBodyElement>
 
 /**
  * The <html> tag requires a "lang" property for accessibility reasons.
@@ -44,15 +13,10 @@ export type BodyProps = Partial<GlobalAttributes>
  *
  * https://www.w3.org/TR/WCAG21/#language-of-page
  */
-export type DocumentRequirements = "lang"
+export type DocumentRequirements = "lang" | "title"
 
-export type DocumentProps = Partial<GlobalAttributes>
-  & Required<Pick<GlobalAttributes, DocumentRequirements>>
-  & { title: string }
-  & Children<React.ReactNode[] | [
-    React.ReactElement<HeadProps>,
-    React.ReactElement<BodyProps>,
-  ] | React.ReactElement<BodyProps>>
+export type DocumentProps = React.HTMLAttributes<HTMLHtmlElement>
+  & Required<Pick<HTMLHtmlElement, DocumentRequirements>>
 
 const LanguageContext = React.createContext<React.MutableRefObject<string>>(undefined)
 const TitleContext = React.createContext("")
@@ -79,8 +43,7 @@ function LanguageProvider({ children, lang }): React.ReactElement {
   )
 }
 
-export type HeadingProps = Partial<GlobalAttributes> & {
-  children: React.ReactNode
+export type HeadingProps = React.HTMLAttributes<HTMLHeadingElement> & {
   level?: HeadingLevel
 }
 
