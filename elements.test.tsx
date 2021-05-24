@@ -6,7 +6,15 @@ import rehypeDomParse from "rehype-dom-parse"
 import rehypeFormat from "rehype-format"
 import unified from "unified"
 import { name, version } from "./package.json"
-import { Body, Div, Document, Head, Heading, Span } from "./elements"
+import {
+  Body,
+  Div,
+  Document,
+  H1,
+  Head,
+  Heading,
+  Span,
+} from "./elements"
 
 function render(component: any): string {
   return rehype()
@@ -56,6 +64,16 @@ describe(`${name}@${version}`, () => {
           <Body>
             <h1>title</h1>
           </Body>
+        </Document>
+      )).toMatchSnapshot()
+    })
+  })
+
+  describe("<H1 />", () => {
+    it("renders a <h1>", () => {
+      expect(render(
+        <Document lang="en-US" title="test">
+          <H1>title</H1>
         </Document>
       )).toMatchSnapshot()
     })

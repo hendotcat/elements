@@ -147,11 +147,6 @@ export type ElementLevel = "block" | "inline"
 
 export type HeadProps = React.HTMLAttributes<HTMLHeadElement>
 
-export type BodyProps = React.HTMLAttributes<HTMLBodyElement>
-
-export type DivProps = React.HTMLAttributes<HTMLDivElement>
-export type SpanProps = React.HTMLAttributes<HTMLSpanElement>
-
 /**
  * The <html> tag requires a "lang" property for accessibility reasons.
  *
@@ -243,27 +238,6 @@ export type HeadingProps = React.HTMLAttributes<HTMLHeadingElement> & {
   level?: HeadingLevel
 }
 
-export const Heading: React.FC<HeadingProps> = withLanguage(props => {
-  const headingLevel = React.useContext(HeadingLevelContext)
-
-  const {
-    level: newLevel,
-    ...heading
-  } = props
-
-  const level = newLevel || headingLevel.current
-  const levelChange = Math.abs(level - headingLevel.current)
-  if (levelChange > 1) {
-    throw new Error(
-      `Heading level ${level} not allowed: previous level is ${headingLevel.current}`
-    )
-  }
-
-  headingLevel.current = level
-  const Element = `h${level}`
-  return <Element {...heading} />
-})
-
 export const Document: React.FC<DocumentProps> = props => {
   const { title, ...html } = props
   const children: any = props.children
@@ -313,26 +287,84 @@ export const Document: React.FC<DocumentProps> = props => {
   )
 }
 
-export const Head: React.FC<HeadProps> = props => {
-  const title = React.useContext(TitleContext)
-  return (
-    <head {...props}>
-      <meta charSet="utf-8" />
-      <title>{ title }</title>
-      {props.children}
-    </head>
-  )
-}
-
-function element<Props>(Element: ElementName): React.FC<Props> {
-  let fc: React.FC<Props> = props => {
-    return <Element {...props} />
-  }
-  fc = withElementLevel(fc, ElementLevels[Element])
-  fc = withLanguage(fc)
-  return fc
+function element<Props>(
+  Name: ElementName,
+  component = (props: Props) => {
+    return <Name {...props} />
+  },
+): React.FC<Props> {
+  component = withElementLevel(component, ElementLevels[Name])
+  component = withLanguage(component)
+  return component
 }
 
 export const Body = element<React.HTMLAttributes<HTMLBodyElement>>("body")
+
 export const Div = element<React.HTMLAttributes<HTMLDivElement>>("div")
+
+export const H1 = element<React.HTMLAttributes<HTMLHeadingElement>>(
+  "h1",
+  props => <Heading {...props} level={1} />
+)
+
+export const H2 = element<React.HTMLAttributes<HTMLHeadingElement>>(
+  "h2",
+  props => <Heading {...props} level={2} />
+)
+
+export const H3 = element<React.HTMLAttributes<HTMLHeadingElement>>(
+  "h3",
+  props => <Heading {...props} level={3} />
+)
+
+export const H4 = element<React.HTMLAttributes<HTMLHeadingElement>>(
+  "h4",
+  props => <Heading {...props} level={4} />
+)
+
+export const H5 = element<React.HTMLAttributes<HTMLHeadingElement>>(
+  "h5",
+  props => <Heading {...props} level={5} />
+)
+
+export const H6 = element<React.HTMLAttributes<HTMLHeadingElement>>(
+  "h6",
+  props => <Heading {...props} level={6} />
+)
+
+export const Head = element<React.HTMLAttributes<HTMLHeadElement>>(
+  "head",
+  props => {
+    const title = React.useContext(TitleContext)
+    return (
+      <head {...props}>
+        <meta charSet="utf-8" />
+        <title>{ title }</title>
+        {props.children}
+      </head>
+    )
+  },
+)
+
+export const Heading: React.FC<HeadingProps> = withLanguage(props => {
+  const headingLevel = React.useContext(HeadingLevelContext)
+
+  const {
+    level: newLevel,
+    ...heading
+  } = props
+
+  const level = newLevel || headingLevel.current
+  const levelChange = Math.abs(level - headingLevel.current)
+  if (levelChange > 1) {
+    throw new Error(
+      `Heading level ${level} not allowed: previous level is ${headingLevel.current}`
+    )
+  }
+
+  headingLevel.current = level
+  const Element = `h${level}`
+  return <Element {...heading} />
+})
+
 export const Span = element<React.HTMLAttributes<HTMLSpanElement>>("span")

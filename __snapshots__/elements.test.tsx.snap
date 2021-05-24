@@ -53,6 +53,20 @@ exports[`@hendotcat/elements@0.0.0 <Document /> treats bare children as body con
 "
 `;
 
+exports[`@hendotcat/elements@0.0.0 <H1 /> renders a <h1> 1`] = `
+"
+<html lang=\\"en-US\\">
+  <head>
+    <meta charset=\\"utf-8\\">
+    <title>test</title>
+  </head>
+  <body>
+    <h1>title</h1>
+  </body>
+</html>
+"
+`;
+
 exports[`@hendotcat/elements@0.0.0 <Heading /> allows heading level changes of up to 1 1`] = `
 "
 <html lang=\\"en-US\\">
