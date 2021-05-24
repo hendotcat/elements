@@ -6,7 +6,7 @@ import rehypeDomParse from "rehype-dom-parse"
 import rehypeFormat from "rehype-format"
 import unified from "unified"
 import { name, version } from "./package.json"
-import { Body, Document, Head, Heading, Span } from "./elements"
+import { Body, Div, Document, Head, Heading, Span } from "./elements"
 
 function render(component: any): string {
   return rehype()
@@ -135,6 +135,24 @@ describe(`${name}@${version}`, () => {
       expect(select("html[lang='en-US']", tree)).toBeTruthy()
       expect(select("h1[lang='sv-SE']", tree)).toBeTruthy()
       expect(select("span[lang='en-US']", tree)).toBeTruthy()
+    })
+  })
+
+  describe("<LevelProvider />", () => {
+    it("allows inline elements inside block elements", () => {
+      expect(() => render(
+        <Document lang="en-US" title="test">
+          <Div><Span>test</Span></Div>
+        </Document>
+      )).not.toThrowError()
+    })
+
+    it("disallows block elements inside inline elements", () => {
+      expect(() => render(
+        <Document lang="en-US" title="test">
+          <Span><Div>test</Div></Span>
+        </Document>
+      )).toThrowError()
     })
   })
 })
