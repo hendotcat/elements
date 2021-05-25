@@ -310,6 +310,10 @@ export const Body = element<
   React.HTMLAttributes<HTMLBodyElement>
 >("body")
 
+export const CanonicalLink: React.FC<{
+  href: string
+}> = ({ href }) => <Link rel="canonical" href={href} />
+
 export const Div = element<
   React.HTMLAttributes<HTMLDivElement>
 >("div")
@@ -409,3 +413,7 @@ export const MetaViewport: React.FC<{
 export const Span = element<
   React.HTMLAttributes<HTMLSpanElement>
 >("span")
+
+export const StylesheetLink: React.FC<{
+  href: string
+}> = ({ href }) => <Link rel="stylesheet" href={href} />

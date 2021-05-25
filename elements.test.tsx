@@ -8,6 +8,7 @@ import unified from "unified"
 import { name } from "./package.json"
 import {
   Body,
+  CanonicalLink,
   Div,
   Document,
   H1,
@@ -19,6 +20,7 @@ import {
   MetaDescription,
   MetaViewport,
   Span,
+  StylesheetLink,
 } from "./elements"
 
 function render(component: any): string {
@@ -35,6 +37,15 @@ function parse(html: string): any {
 }
 
 describe(name, () => {
+  describe("<CanonicalLink />", () => {
+    it("sets the canonical URL", async () => {
+      const html = render(<CanonicalLink href="https://example.org" />)
+      const tree = parse(html)
+      const tag = select("link[rel=canonical]", tree)
+      expect(tag.properties.href).toBe("https://example.org")
+    })
+  })
+
   describe("<Div />", () => {
     it("renders a <div> tag", async () => {
       const html = render(<Div />)
@@ -240,6 +251,15 @@ describe(name, () => {
       const tree = parse(html)
       const tag = select("span", tree)
       expect(tag).toBeTruthy()
+    })
+  })
+
+  describe("<StylesheetLink />", () => {
+    it("links to a stylesheet", async () => {
+      const html = render(<StylesheetLink href="style.css" />)
+      const tree = parse(html)
+      const tag = select("link[rel=stylesheet]", tree)
+      expect(tag.properties.href).toBe("style.css")
     })
   })
 })
