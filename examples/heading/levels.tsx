@@ -3,7 +3,7 @@ import { Document, Heading } from "../../elements"
 
 export default function Levels(): React.ReactElement {
   return (
-    <Document lang="en-US" title="example">
+    <Document lang="en-US" title="example" description="testing">
       <Heading level={1}>level 1</Heading>
       <Heading level={2}>level 2</Heading>
       <Heading level={3}>level 3</Heading>

@@ -161,10 +161,12 @@ export type HeadProps = React.HTMLAttributes<HTMLHeadElement>
 export type DocumentRequirements = "lang" | "title"
 
 export type DocumentProps = React.HTMLAttributes<HTMLHtmlElement>
+  & { description: string }
   & Required<Pick<HTMLHtmlElement, DocumentRequirements>>
 
 const LanguageContext = React.createContext<React.MutableRefObject<string>>(undefined)
 const TitleContext = React.createContext("")
+const DescriptionContext = React.createContext("")
 
 type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
 
@@ -241,7 +243,7 @@ export type HeadingProps = React.HTMLAttributes<HTMLHeadingElement> & {
 }
 
 export const Document: React.FC<DocumentProps> = props => {
-  const { title, ...html } = props
+  const { title, description,  ...html } = props
   const children: any = props.children
   const emptyBody = children === undefined
   const headAndBody = !emptyBody
@@ -257,6 +259,7 @@ export const Document: React.FC<DocumentProps> = props => {
     <HeadingLevelProvider>
     <LanguageProvider lang={props.lang}>
       <TitleContext.Provider value={title}>
+      <DescriptionContext.Provider value={description}>
         <html {...html}>
           {emptyBody ? (
             <>
@@ -282,6 +285,7 @@ export const Document: React.FC<DocumentProps> = props => {
             </>
           )}
         </html>
+      </DescriptionContext.Provider>
       </TitleContext.Provider>
     </LanguageProvider>
     </HeadingLevelProvider>
@@ -342,6 +346,7 @@ export const Head = element<React.HTMLAttributes<HTMLHeadElement>>(
       <head {...props}>
         <MetaCharset />
         <MetaViewport />
+        <MetaDescription />
         <title>{ title }</title>
         {props.children}
       </head>
@@ -376,6 +381,15 @@ export const Meta = element<
 
 export const MetaCharset: React.FC = () => (
   <Meta charSet="utf-8" />
+)
+
+export const MetaDescription: React.FC<{
+  description?: string
+}> = ({ description = React.useContext(DescriptionContext) }) => (
+  <Meta
+    name="description" 
+    content={description}
+  />
 )
 
 export const MetaViewport: React.FC<{

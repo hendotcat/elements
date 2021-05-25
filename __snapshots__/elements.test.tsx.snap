@@ -6,6 +6,7 @@ exports[`@hendotcat/elements@0.0.0 <Document /> renders <Body> children as body 
   <head>
     <meta charset=\\"utf-8\\">
     <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1\\">
+    <meta name=\\"description\\" content=\\"testing\\">
     <title>test</title>
   </head>
   <body>
@@ -21,6 +22,7 @@ exports[`@hendotcat/elements@0.0.0 <Document /> renders a valid document given t
   <head>
     <meta charset=\\"utf-8\\">
     <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1\\">
+    <meta name=\\"description\\" content=\\"testing\\">
     <title>test</title>
   </head>
   <body></body>
@@ -34,6 +36,7 @@ exports[`@hendotcat/elements@0.0.0 <Document /> renders custom header metadata 1
   <head>
     <meta charset=\\"utf-8\\">
     <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1\\">
+    <meta name=\\"description\\" content=\\"testing\\">
     <title>test</title>
     <meta property=\\"og:title\\" content=\\"test\\">
   </head>
@@ -48,6 +51,7 @@ exports[`@hendotcat/elements@0.0.0 <Document /> treats bare children as body con
   <head>
     <meta charset=\\"utf-8\\">
     <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1\\">
+    <meta name=\\"description\\" content=\\"testing\\">
     <title>test</title>
   </head>
   <body>
@@ -63,6 +67,7 @@ exports[`@hendotcat/elements@0.0.0 <H1 /> renders a <h1> 1`] = `
   <head>
     <meta charset=\\"utf-8\\">
     <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1\\">
+    <meta name=\\"description\\" content=\\"testing\\">
     <title>test</title>
   </head>
   <body>
@@ -78,6 +83,7 @@ exports[`@hendotcat/elements@0.0.0 <Heading /> allows heading level changes of u
   <head>
     <meta charset=\\"utf-8\\">
     <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1\\">
+    <meta name=\\"description\\" content=\\"testing\\">
     <title>test</title>
   </head>
   <body>
@@ -105,6 +111,7 @@ exports[`@hendotcat/elements@0.0.0 <Heading /> renders a <h1> by default 1`] = `
   <head>
     <meta charset=\\"utf-8\\">
     <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1\\">
+    <meta name=\\"description\\" content=\\"testing\\">
     <title>test</title>
   </head>
   <body>

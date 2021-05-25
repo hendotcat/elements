@@ -33,13 +33,17 @@ describe(`${name}@${version}`, () => {
   describe("<Document />", () => {
     it("renders a valid document given the bare minimum input", () => {
       expect(render(
-        <Document lang="en-US" title="test" />
+        <Document
+          lang="en-US"
+          title="test"
+          description="testing"
+        />
       )).toMatchSnapshot()
     })
 
     it("renders custom header metadata", () => {
       expect(render(
-        <Document lang="en-US" title="test">
+        <Document lang="en-US" title="test" description="testing">
           <Head>
             <meta property="og:title" content="test" />
           </Head>
@@ -49,7 +53,7 @@ describe(`${name}@${version}`, () => {
 
     it("treats bare children as body contents", () => {
       expect(render(
-        <Document lang="en-US" title="test">
+        <Document lang="en-US" title="test" description="testing">
           <h1>title</h1>
         </Document>
       )).toMatchSnapshot()
@@ -57,7 +61,7 @@ describe(`${name}@${version}`, () => {
 
     it("renders <Body> children as body contents", () => {
       expect(render(
-        <Document lang="en-US" title="test">
+        <Document lang="en-US" title="test" description="testing">
           <Body>
             <h1>title</h1>
           </Body>
@@ -69,7 +73,7 @@ describe(`${name}@${version}`, () => {
   describe("<H1 />", () => {
     it("renders a <h1>", () => {
       expect(render(
-        <Document lang="en-US" title="test">
+        <Document lang="en-US" title="test" description="testing">
           <H1>title</H1>
         </Document>
       )).toMatchSnapshot()
@@ -79,7 +83,7 @@ describe(`${name}@${version}`, () => {
   describe("<Heading />", () => {
     it("renders a <h1> by default", () => {
       expect(render(
-        <Document lang="en-US" title="test">
+        <Document lang="en-US" title="test" description="testing">
           <Heading>title</Heading>
         </Document>
       )).toMatchSnapshot()
@@ -87,7 +91,7 @@ describe(`${name}@${version}`, () => {
 
     it("allows heading level changes of up to 1", () => {
       expect(render(
-        <Document lang="en-US" title="test">
+        <Document lang="en-US" title="test" description="testing">
           <Heading level={1}>one</Heading>
           <Heading level={2}>two</Heading>
           <Heading level={3}>three</Heading>
@@ -105,7 +109,7 @@ describe(`${name}@${version}`, () => {
 
     it("rejects heading level changes of more than 1", () => {
       expect(() => render(
-        <Document lang="en-US" title="test">
+        <Document lang="en-US" title="test" description="testing">
           <Heading level={1}>one</Heading>
           <Heading level={3}>three</Heading>
         </Document>
@@ -116,7 +120,7 @@ describe(`${name}@${version}`, () => {
   describe("<LanguageProvider />", () => {
     it("includes lang attribute if different from document", () => {
       const html = render(
-        <Document lang="en-US" title="test">
+        <Document lang="en-US" title="test" description="testing">
           <Heading lang="sv-SE">titel</Heading>
         </Document>
       )
@@ -128,7 +132,7 @@ describe(`${name}@${version}`, () => {
 
     it("excludes lang attribute if same as document", () => {
       const html = render(
-        <Document lang="en-US" title="test">
+        <Document lang="en-US" title="test" description="testing">
           <Heading lang="en-US">title</Heading>
         </Document>
       )
@@ -139,7 +143,7 @@ describe(`${name}@${version}`, () => {
 
     it("includes lang attribute if different from parent", async () => {
       const html = render(
-        <Document lang="en-US" title="test">
+        <Document lang="en-US" title="test" description="testing">
           <Heading lang="sv-SE">
             <Span lang="en-US">
               title
@@ -157,7 +161,7 @@ describe(`${name}@${version}`, () => {
   describe("<LevelProvider />", () => {
     it("allows inline elements inside block elements", () => {
       expect(() => render(
-        <Document lang="en-US" title="test">
+        <Document lang="en-US" title="test" description="testing">
           <Div><Span>test</Span></Div>
         </Document>
       )).not.toThrowError()
@@ -165,7 +169,7 @@ describe(`${name}@${version}`, () => {
 
     it("disallows block elements inside inline elements", () => {
       expect(() => render(
-        <Document lang="en-US" title="test">
+        <Document lang="en-US" title="test" description="testing">
           <Span><Div>test</Div></Span>
         </Document>
       )).toThrowError()
