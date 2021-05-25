@@ -1,7 +1,11 @@
 import React from "react"
 
 export type ElementName = 
+  | "a"
   | "body"
+  | "dd"
+  | "dl"
+  | "dt"
   | "div"
   | "h1"
   | "h2"
@@ -16,7 +20,11 @@ export type ElementName =
   | "span"
 
 const ElementLevels: Record<ElementName, ElementLevel> = {
+  a: "inline",
   body: "block",
+  dd: "block",
+  dl: "block",
+  dt: "block",
   div: "block",
   h1: "block",
   h2: "block",
@@ -306,6 +314,10 @@ function element<Props>(
   return component
 }
 
+export const Anchor = element<
+  React.AnchorHTMLAttributes<HTMLAnchorElement>
+>("a")
+
 export const Body = element<
   React.HTMLAttributes<HTMLBodyElement>
 >("body")
@@ -313,6 +325,36 @@ export const Body = element<
 export const CanonicalLink: React.FC<{
   href: string
 }> = ({ href }) => <Link rel="canonical" href={href} />
+
+export const DescriptionDetails = element<
+  React.HTMLAttributes<HTMLElement>
+>("dd")
+
+export const DescriptionList = element<
+  React.HTMLAttributes<HTMLElement> & {
+    items?: [
+      React.ReactNode | string,
+      React.ReactNode | string,
+    ][]
+  }
+>("dl", ({ items, children, ...dl }) => (
+  <dl {...dl}>
+    {items ? items.map((item, i) => (
+      <React.Fragment key={i}>
+        <DescriptionTerm>
+          {item[0]}
+        </DescriptionTerm>
+        <DescriptionDetails>
+          {item[1]}
+        </DescriptionDetails>
+      </React.Fragment>
+    )) : children}
+  </dl>
+))
+
+export const DescriptionTerm = element<
+  React.HTMLAttributes<HTMLElement>
+>("dt")
 
 export const Div = element<
   React.HTMLAttributes<HTMLDivElement>

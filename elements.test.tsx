@@ -7,8 +7,12 @@ import rehypeFormat from "rehype-format"
 import unified from "unified"
 import { name } from "./package.json"
 import {
+  Anchor,
   Body,
   CanonicalLink,
+  DescriptionDetails,
+  DescriptionList,
+  DescriptionTerm,
   Div,
   Document,
   H1,
@@ -26,7 +30,11 @@ import {
 function render(component: any): string {
   return rehype()
     .use(rehypeFormat)
-    .processSync(ReactDOMServer.renderToString(component))
+    .processSync(
+      ReactDOMServer
+        .renderToString(component)
+        .replace(/ data-reactroot=""/g, "")
+    )
     .toString()
 }
 
@@ -37,12 +45,62 @@ function parse(html: string): any {
 }
 
 describe(name, () => {
+  describe("<Anchor />", () => {
+    it("renders a link", async () => {
+      const html = render(
+        <Anchor href="https://example.org/">
+          click here
+        </Anchor>
+      )
+      const tree = parse(html)
+      const tag = select("a[href='https://example.org/']", tree)
+      expect(tag.children[0].value).toBe("click here")
+    })
+  })
+
   describe("<CanonicalLink />", () => {
     it("sets the canonical URL", async () => {
       const html = render(<CanonicalLink href="https://example.org" />)
       const tree = parse(html)
       const tag = select("link[rel=canonical]", tree)
       expect(tag.properties.href).toBe("https://example.org")
+    })
+  })
+
+  describe("<DescriptionDetails />", () => {
+    it("renders a <dd> tag", async () => {
+      const html = render(<DescriptionDetails>abc</DescriptionDetails>)
+      const tree = parse(html)
+      const tag = select("dd", tree)
+      expect(tag.children[0].value).toBe("abc")
+    })
+  })
+
+  describe("<DescriptionList />", () => {
+    it("renders a <dl> tag", async () => {
+      const html = render(<DescriptionList>abc</DescriptionList>)
+      const tree = parse(html)
+      const tag = select("dl", tree)
+      expect(tag.children[0].value).toBe("abc")
+    })
+
+    it("renders a list of links with descriptions", async () => {
+      const html = render(
+        <DescriptionList items={[[
+          <Anchor href="https://example.org/">link</Anchor>,
+          <Span>an example website</Span>,
+        ]]} />
+      )
+      expect(html).toMatchSnapshot()
+    })
+  })
+
+  describe("<DescriptionTerm />", () => {
+    it("renders a <dt> tag", async () => {
+      const html = render(<DescriptionTerm>abc</DescriptionTerm>)
+      const tree = parse(html)
+      const tag = select("dt", tree)
+      expect(tag.children[0].value).toBe("abc")
     })
   })
 

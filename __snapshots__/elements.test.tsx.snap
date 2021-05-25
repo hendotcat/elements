@@ -1,5 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`@hendotcat/elements <DescriptionList /> renders a list of links with descriptions 1`] = `
+"
+<html>
+  <head></head>
+  <body>
+    <dl>
+      <dt><a href=\\"https://example.org/\\">link</a></dt>
+      <dd><span>an example website</span></dd>
+    </dl>
+  </body>
+</html>
+"
+`;
+
 exports[`@hendotcat/elements <Document /> renders <Body> children as body contents 1`] = `
 "
 <html lang=\\"en-US\\">
