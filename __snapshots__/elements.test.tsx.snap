@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`@hendotcat/elements@0.0.0 <Document /> renders <Body> children as body contents 1`] = `
+exports[`@hendotcat/elements <Document /> renders <Body> children as body contents 1`] = `
 "
 <html lang=\\"en-US\\">
   <head>
@@ -16,7 +16,7 @@ exports[`@hendotcat/elements@0.0.0 <Document /> renders <Body> children as body 
 "
 `;
 
-exports[`@hendotcat/elements@0.0.0 <Document /> renders a valid document given the bare minimum input 1`] = `
+exports[`@hendotcat/elements <Document /> renders a valid document given the bare minimum input 1`] = `
 "
 <html lang=\\"en-US\\">
   <head>
@@ -30,7 +30,7 @@ exports[`@hendotcat/elements@0.0.0 <Document /> renders a valid document given t
 "
 `;
 
-exports[`@hendotcat/elements@0.0.0 <Document /> renders custom header metadata 1`] = `
+exports[`@hendotcat/elements <Document /> renders custom header metadata 1`] = `
 "
 <html lang=\\"en-US\\">
   <head>
@@ -45,7 +45,7 @@ exports[`@hendotcat/elements@0.0.0 <Document /> renders custom header metadata 1
 "
 `;
 
-exports[`@hendotcat/elements@0.0.0 <Document /> treats bare children as body contents 1`] = `
+exports[`@hendotcat/elements <Document /> treats bare children as body contents 1`] = `
 "
 <html lang=\\"en-US\\">
   <head>
@@ -61,7 +61,7 @@ exports[`@hendotcat/elements@0.0.0 <Document /> treats bare children as body con
 "
 `;
 
-exports[`@hendotcat/elements@0.0.0 <H1 /> renders a <h1> 1`] = `
+exports[`@hendotcat/elements <H1 /> renders a <h1> 1`] = `
 "
 <html lang=\\"en-US\\">
   <head>
@@ -77,7 +77,7 @@ exports[`@hendotcat/elements@0.0.0 <H1 /> renders a <h1> 1`] = `
 "
 `;
 
-exports[`@hendotcat/elements@0.0.0 <Heading /> allows heading level changes of up to 1 1`] = `
+exports[`@hendotcat/elements <Heading /> allows heading level changes of up to 1 1`] = `
 "
 <html lang=\\"en-US\\">
   <head>
@@ -103,9 +103,9 @@ exports[`@hendotcat/elements@0.0.0 <Heading /> allows heading level changes of u
 "
 `;
 
-exports[`@hendotcat/elements@0.0.0 <Heading /> rejects heading level changes of more than 1 1`] = `"Heading level 3 not allowed: previous level is 1"`;
+exports[`@hendotcat/elements <Heading /> rejects heading level changes of more than 1 1`] = `"Heading level 3 not allowed: previous level is 1"`;
 
-exports[`@hendotcat/elements@0.0.0 <Heading /> renders a <h1> by default 1`] = `
+exports[`@hendotcat/elements <Heading /> renders a <h1> by default 1`] = `
 "
 <html lang=\\"en-US\\">
   <head>

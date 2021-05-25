@@ -11,6 +11,7 @@ export type ElementName =
   | "h6"
   | "head"
   | "html"
+  | "link"
   | "meta"
   | "span"
 
@@ -25,6 +26,7 @@ const ElementLevels: Record<ElementName, ElementLevel> = {
   h6: "block",
   head: "block",
   html: "block",
+  link: "block",
   meta: "block",
   span: "inline",
 }
@@ -221,7 +223,7 @@ function ElementLevelProvider({ children, elementLevel = "block" }): React.React
 const withElementLevel = (Component, level: ElementLevel) => props => {
   const parentLevel = React.useContext(ElementLevelContext)
   const { children, ...rest } = props
-  if (parentLevel.current === "block" && level === "inline") {
+  if (parentLevel?.current === "block" && level === "inline") {
     return (
       <Component {...rest}>
         <ElementLevelProvider elementLevel={level}>
@@ -231,7 +233,7 @@ const withElementLevel = (Component, level: ElementLevel) => props => {
     )
   }
 
-  if (parentLevel.current === "inline" && level === "block") {
+  if (parentLevel?.current === "inline" && level === "block") {
     throw new Error("Block element not allowed as child of inline element")
   }
 
@@ -304,39 +306,37 @@ function element<Props>(
   return component
 }
 
-export const Body = element<React.HTMLAttributes<HTMLBodyElement>>("body")
+export const Body = element<
+  React.HTMLAttributes<HTMLBodyElement>
+>("body")
 
-export const Div = element<React.HTMLAttributes<HTMLDivElement>>("div")
+export const Div = element<
+  React.HTMLAttributes<HTMLDivElement>
+>("div")
 
-export const H1 = element<React.HTMLAttributes<HTMLHeadingElement>>(
-  "h1",
-  props => <Heading {...props} level={1} />
-)
+export const H1 = element<
+  React.HTMLAttributes<HTMLHeadingElement>
+>("h1", props => <Heading {...props} level={1} />)
 
-export const H2 = element<React.HTMLAttributes<HTMLHeadingElement>>(
-  "h2",
-  props => <Heading {...props} level={2} />
-)
+export const H2 = element<
+  React.HTMLAttributes<HTMLHeadingElement>
+>("h2", props => <Heading {...props} level={2} />)
 
-export const H3 = element<React.HTMLAttributes<HTMLHeadingElement>>(
-  "h3",
-  props => <Heading {...props} level={3} />
-)
+export const H3 = element<
+  React.HTMLAttributes<HTMLHeadingElement>
+>("h3", props => <Heading {...props} level={3} />)
 
-export const H4 = element<React.HTMLAttributes<HTMLHeadingElement>>(
-  "h4",
-  props => <Heading {...props} level={4} />
-)
+export const H4 = element<
+  React.HTMLAttributes<HTMLHeadingElement>
+>("h4", props => <Heading {...props} level={4} />)
 
-export const H5 = element<React.HTMLAttributes<HTMLHeadingElement>>(
-  "h5",
-  props => <Heading {...props} level={5} />
-)
+export const H5 = element<
+  React.HTMLAttributes<HTMLHeadingElement>
+>("h5", props => <Heading {...props} level={5} />)
 
-export const H6 = element<React.HTMLAttributes<HTMLHeadingElement>>(
-  "h6",
-  props => <Heading {...props} level={6} />
-)
+export const H6 = element<
+  React.HTMLAttributes<HTMLHeadingElement>
+>("h6", props => <Heading {...props} level={6} />)
 
 export const Head = element<React.HTMLAttributes<HTMLHeadElement>>(
   "head",
@@ -375,6 +375,10 @@ export const Heading: React.FC<HeadingProps> = withLanguage(props => {
   return <Element {...heading} />
 })
 
+export const Link = element<
+  React.LinkHTMLAttributes<HTMLLinkElement>
+>("link")
+
 export const Meta = element<
   React.MetaHTMLAttributes<HTMLMetaElement>
 >("meta")
@@ -402,4 +406,6 @@ export const MetaViewport: React.FC<{
   />
 )
 
-export const Span = element<React.HTMLAttributes<HTMLSpanElement>>("span")
+export const Span = element<
+  React.HTMLAttributes<HTMLSpanElement>
+>("span")

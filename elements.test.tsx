@@ -5,7 +5,7 @@ import rehype from "rehype"
 import rehypeDomParse from "rehype-dom-parse"
 import rehypeFormat from "rehype-format"
 import unified from "unified"
-import { name, version } from "./package.json"
+import { name } from "./package.json"
 import {
   Body,
   Div,
@@ -13,6 +13,11 @@ import {
   H1,
   Head,
   Heading,
+  Link,
+  Meta,
+  MetaCharset,
+  MetaDescription,
+  MetaViewport,
   Span,
 } from "./elements"
 
@@ -29,7 +34,16 @@ function parse(html: string): any {
     .parse(html)
 }
 
-describe(`${name}@${version}`, () => {
+describe(name, () => {
+  describe("<Div />", () => {
+    it("renders a <div> tag", async () => {
+      const html = render(<Div />)
+      const tree = parse(html)
+      const tag = select("div", tree)
+      expect(tag).toBeTruthy()
+    })
+  })
+
   describe("<Document />", () => {
     it("renders a valid document given the bare minimum input", () => {
       expect(render(
@@ -124,7 +138,6 @@ describe(`${name}@${version}`, () => {
           <Heading lang="sv-SE">titel</Heading>
         </Document>
       )
-      console.log(html)
       const tree = parse(html)
       expect(select("html[lang='en-US']", tree)).toBeTruthy()
       expect(select("h1[lang='sv-SE']", tree)).toBeTruthy()
@@ -173,6 +186,60 @@ describe(`${name}@${version}`, () => {
           <Span><Div>test</Div></Span>
         </Document>
       )).toThrowError()
+    })
+  })
+
+  describe("<Link />", () => {
+    it("renders a <link> tag", async () => {
+      const html = render(<Link rel="stylesheet" href="style.css" />)
+      const tree = parse(html)
+      const tag = select("link[rel='stylesheet'][href='style.css']", tree)
+      expect(tag).toBeTruthy()
+    })
+  })
+
+  describe("<Meta />", () => {
+    it("renders a <meta> tag", async () => {
+      const html = render(<Meta name="og:title" content="hello" />)
+      const tree = parse(html)
+      const tag = select("meta[name='og:title']", tree)
+      expect(tag.properties.content).toBe("hello")
+    })
+  })
+
+  describe("<MetaCharset />", () => {
+    it("sets the charset to utf8", async () => {
+      const html = render(<MetaCharset />)
+      const tree = parse(html)
+      const tag = select("meta[charset='utf-8']", tree)
+      expect(tag).toBeTruthy()
+    })
+  })
+
+  describe("<MetaDescription />", () => {
+    it("renders the SEO description", async () => {
+      const html = render(<MetaDescription description="test" />)
+      const tree = parse(html)
+      const tag = select("meta[name='description']", tree)
+      expect(tag.properties.content).toBe("test")
+    })
+  })
+
+  describe("<MetaViewport />", () => {
+    it("sets the usual responsive defaults", async () => {
+      const html = render(<MetaViewport />)
+      const tree = parse(html)
+      const tag = select("meta[name='viewport']", tree)
+      expect(tag.properties.content).toBe("width=device-width, initial-scale=1")
+    })
+  })
+
+  describe("<Span />", () => {
+    it("renders a <span> tag", async () => {
+      const html = render(<Span />)
+      const tree = parse(html)
+      const tag = select("span", tree)
+      expect(tag).toBeTruthy()
     })
   })
 })
