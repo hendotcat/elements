@@ -5,6 +5,7 @@ exports[`@hendotcat/elements@0.0.0 <Document /> renders <Body> children as body 
 <html lang=\\"en-US\\">
   <head>
     <meta charset=\\"utf-8\\">
+    <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1\\">
     <title>test</title>
   </head>
   <body>
@@ -19,6 +20,7 @@ exports[`@hendotcat/elements@0.0.0 <Document /> renders a valid document given t
 <html lang=\\"en-US\\">
   <head>
     <meta charset=\\"utf-8\\">
+    <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1\\">
     <title>test</title>
   </head>
   <body></body>
@@ -31,8 +33,9 @@ exports[`@hendotcat/elements@0.0.0 <Document /> renders custom header metadata 1
 <html lang=\\"en-US\\">
   <head>
     <meta charset=\\"utf-8\\">
-    <title>test</title>
     <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1\\">
+    <title>test</title>
+    <meta property=\\"og:title\\" content=\\"test\\">
   </head>
   <body></body>
 </html>
@@ -44,6 +47,7 @@ exports[`@hendotcat/elements@0.0.0 <Document /> treats bare children as body con
 <html lang=\\"en-US\\">
   <head>
     <meta charset=\\"utf-8\\">
+    <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1\\">
     <title>test</title>
   </head>
   <body>
@@ -58,6 +62,7 @@ exports[`@hendotcat/elements@0.0.0 <H1 /> renders a <h1> 1`] = `
 <html lang=\\"en-US\\">
   <head>
     <meta charset=\\"utf-8\\">
+    <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1\\">
     <title>test</title>
   </head>
   <body>
@@ -72,6 +77,7 @@ exports[`@hendotcat/elements@0.0.0 <Heading /> allows heading level changes of u
 <html lang=\\"en-US\\">
   <head>
     <meta charset=\\"utf-8\\">
+    <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1\\">
     <title>test</title>
   </head>
   <body>
@@ -98,6 +104,7 @@ exports[`@hendotcat/elements@0.0.0 <Heading /> renders a <h1> by default 1`] = `
 <html lang=\\"en-US\\">
   <head>
     <meta charset=\\"utf-8\\">
+    <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1\\">
     <title>test</title>
   </head>
   <body>

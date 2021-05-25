@@ -41,10 +41,7 @@ describe(`${name}@${version}`, () => {
       expect(render(
         <Document lang="en-US" title="test">
           <Head>
-            <meta
-              name="viewport"
-              content="width=device-width, initial-scale=1"
-            />
+            <meta property="og:title" content="test" />
           </Head>
         </Document>
       )).toMatchSnapshot()
@@ -123,6 +120,7 @@ describe(`${name}@${version}`, () => {
           <Heading lang="sv-SE">titel</Heading>
         </Document>
       )
+      console.log(html)
       const tree = parse(html)
       expect(select("html[lang='en-US']", tree)).toBeTruthy()
       expect(select("h1[lang='sv-SE']", tree)).toBeTruthy()

@@ -11,6 +11,7 @@ export type ElementName =
   | "h6"
   | "head"
   | "html"
+  | "meta"
   | "span"
 
 const ElementLevels: Record<ElementName, ElementLevel> = {
@@ -24,6 +25,7 @@ const ElementLevels: Record<ElementName, ElementLevel> = {
   h6: "block",
   head: "block",
   html: "block",
+  meta: "block",
   span: "inline",
 }
 
@@ -258,7 +260,7 @@ export const Document: React.FC<DocumentProps> = props => {
         <html {...html}>
           {emptyBody ? (
             <>
-              <Head></Head>
+              <Head />
               <Body>{" "}</Body>
             </>
           ) : headAndBody ? (
@@ -270,12 +272,12 @@ export const Document: React.FC<DocumentProps> = props => {
             </>
           ) : bodyOnly ? (
             <>
-              <Head></Head>
+              <Head />
               {props.children}
             </>
           ) : (
             <>
-              <Head></Head>
+              <Head />
               <Body>{props.children}</Body>
             </>
           )}
@@ -338,7 +340,8 @@ export const Head = element<React.HTMLAttributes<HTMLHeadElement>>(
     const title = React.useContext(TitleContext)
     return (
       <head {...props}>
-        <meta charSet="utf-8" />
+        <MetaCharset />
+        <MetaViewport />
         <title>{ title }</title>
         {props.children}
       </head>
@@ -366,5 +369,23 @@ export const Heading: React.FC<HeadingProps> = withLanguage(props => {
   const Element = `h${level}`
   return <Element {...heading} />
 })
+
+export const Meta = element<
+  React.MetaHTMLAttributes<HTMLMetaElement>
+>("meta")
+
+export const MetaCharset: React.FC = () => (
+  <Meta charSet="utf-8" />
+)
+
+export const MetaViewport: React.FC<{
+  initialScale?: number
+  width?: number | "device-width"
+}> = ({ initialScale = 1, width = "device-width" }) => (
+  <Meta
+    name="viewport" 
+    content={`width=${width}, initial-scale=${initialScale}`}
+  />
+)
 
 export const Span = element<React.HTMLAttributes<HTMLSpanElement>>("span")
