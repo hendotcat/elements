@@ -20,142 +20,7 @@ export type ElementName =
   | "meta"
   | "span"
 
-const ElementLevels: Record<ElementName, ElementLevel> = {
-  a: "inline",
-  body: "block",
-  dd: "block",
-  dl: "block",
-  dt: "block",
-  div: "block",
-  h1: "block",
-  h2: "block",
-  h3: "block",
-  h4: "block",
-  h5: "block",
-  h6: "block",
-  head: "block",
-  html: "block",
-  link: "block",
-  main: "block",
-  meta: "block",
-  span: "inline",
-}
-
-/*
-export type ElementName = "a"
-  | "abbr"
-  | "address"
-  | "area"
-  | "article"
-  | "aside"
-  | "audio"
-  | "b"
-  | "base"
-  | "bdi"
-  | "bdo"
-  | "blockquote"
-  | "body"
-  | "br"
-  | "button"
-  | "canvas"
-  | "caption"
-  | "cite"
-  | "code"
-  | "col"
-  | "colgroup"
-  | "data"
-  | "datalist"
-  | "dd"
-  | "del"
-  | "details"
-  | "dfn"
-  | "dialog"
-  | "div"
-  | "dl"
-  | "dt"
-  | "em"
-  | "embed"
-  | "fieldset"
-  | "figcaption"
-  | "figure"
-  | "footer"
-  | "form"
-  | "h1"
-  | "h2"
-  | "h3"
-  | "h4"
-  | "h5"
-  | "h6"
-  | "head"
-  | "header"
-  | "hgroup"
-  | "hr"
-  | "html"
-  | "i"
-  | "iframe"
-  | "img"
-  | "input"
-  | "ins"
-  | "kbd"
-  | "label"
-  | "legend"
-  | "li"
-  | "link"
-  | "main"
-  | "map"
-  | "mark"
-  | "menu"
-  | "meta"
-  | "meter"
-  | "nav"
-  | "noscript"
-  | "object"
-  | "ol"
-  | "optgroup"
-  | "option"
-  | "output"
-  | "p"
-  | "param"
-  | "picture"
-  | "pre"
-  | "progress"
-  | "q"
-  | "rb"
-  | "rp"
-  | "rt"
-  | "rtc"
-  | "ruby"
-  | "s"
-  | "samp"
-  | "script"
-  | "section"
-  | "select"
-  | "slot"
-  | "small"
-  | "source"
-  | "span"
-  | "strong"
-  | "style"
-  | "sub"
-  | "summary"
-  | "sup"
-  | "table"
-  | "tbody"
-  | "td"
-  | "template"
-  | "tfoot"
-  | "th"
-  | "thead"
-  | "time"
-  | "title"
-  | "tr"
-  | "track"
-  | "u"
-  | "ul"
-  | "var"
-  | "video"
-  | "wbr"
-*/
+const ElementLevels: Partial<Record<ElementName, ElementLevel>> = {}
 
 export type ElementLevel = "block" | "inline"
 
@@ -169,34 +34,13 @@ export type ContentCategory =
   | "phrasing"
   | "sectioning"
 
-const ElementContentCategories: Record<
+const ElementContentCategories: Partial<Record<
   ElementName,
   ({ props, ancestry }: {
     props: React.HTMLAttributes<HTMLElement>,
     ancestry: ElementName[],
   }) => ContentCategory[]
-> = {
-  a: () => ["flow", "phrasing"],
-  body: () => [],
-  dd: () => ["flow"],
-  dl: () => ["flow"],
-  dt: () => ["flow"],
-  div: () => ["flow"],
-  h1: () => ["flow", "heading"],
-  h2: () => ["flow", "heading"],
-  h3: () => ["flow", "heading"],
-  h4: () => ["flow", "heading"],
-  h5: () => ["flow", "heading"],
-  h6: () => ["flow", "heading"],
-  head: () => [],
-  html: () => [],
-  link: () => ["metadata"],
-  main: () => ["flow"],
-  meta: ({ props }) => props.itemProp
-    ? ["flow", "metadata", "phrasing"]
-    : ["metadata"],
-  span: () => ["flow", "phrasing"],
-}
+>> = {}
 
 export type HeadProps = React.HTMLAttributes<HTMLHeadElement>
 
@@ -351,25 +195,47 @@ export const Document: React.FC<DocumentProps> = props => {
   )
 }
 
-function element<Props>(
-  Name: ElementName,
-  component = (props: Props) => {
-    return <Name {...props} />
-  },
-): React.FC<Props> {
-  component = withAncestry(component, Name)
-  component = withElementLevel(component, ElementLevels[Name])
+function element<Props>({
+  name,
+  level,
+  contentCategories,
+  component = props => React.createElement(name, props),
+}: {
+  name: ElementName,
+  level: ElementLevel,
+  contentCategories: ({ props, ancestry }: {
+    props: React.HTMLAttributes<HTMLElement>,
+    ancestry: ElementName[],
+  }) => ContentCategory[],
+  component?: (props: Props) => React.ReactElement,
+}): React.FC<Props> {
+  ElementLevels[name] = level
+  ElementContentCategories[name] = contentCategories
+
+  component = withAncestry(component, name)
+  component = withElementLevel(component, level)
   component = withLanguage(component)
   return component
 }
 
 export const Anchor = element<
   React.AnchorHTMLAttributes<HTMLAnchorElement>
->("a")
+>({
+  name: "a",
+  level: "inline",
+  contentCategories: () => [
+    "flow",
+    "phrasing",
+  ],
+})
 
 export const Body = element<
   React.HTMLAttributes<HTMLBodyElement>
->("body")
+>({
+  name: "body",
+  level: "block",
+  contentCategories: () => [],
+})
 
 export const CanonicalLink: React.FC<{
   href: string
@@ -377,7 +243,11 @@ export const CanonicalLink: React.FC<{
 
 export const DescriptionDetails = element<
   React.HTMLAttributes<HTMLElement>
->("dd")
+>({
+  name: "dd",
+  level: "block",
+  contentCategories: () => ["flow"],
+})
 
 export const DescriptionList = element<
   React.HTMLAttributes<HTMLElement> & {
@@ -386,68 +256,113 @@ export const DescriptionList = element<
       React.ReactNode | string,
     ][]
   }
->("dl", ({ items, children, ...dl }) => (
-  <dl {...dl}>
-    {items ? items.map((item, i) => (
-      <React.Fragment key={i}>
-        <DescriptionTerm>
-          {item[0]}
-        </DescriptionTerm>
-        <DescriptionDetails>
-          {item[1]}
-        </DescriptionDetails>
-      </React.Fragment>
-    )) : children}
-  </dl>
-))
+>({
+  name: "dl",
+  level: "block",
+  contentCategories: () => ["flow"],
+  component: ({ items, children, ...dl }) => (
+    <dl {...dl}>
+      {items ? items.map((item, i) => (
+        <React.Fragment key={i}>
+          <DescriptionTerm>
+            {item[0]}
+          </DescriptionTerm>
+          <DescriptionDetails>
+            {item[1]}
+          </DescriptionDetails>
+        </React.Fragment>
+      )) : children}
+    </dl>
+  )
+})
 
 export const DescriptionTerm = element<
   React.HTMLAttributes<HTMLElement>
->("dt")
+>({
+  name: "dt",
+  level: "block",
+  contentCategories: () => ["flow"],
+})
 
 export const Div = element<
   React.HTMLAttributes<HTMLDivElement>
->("div")
+>({
+  name: "div",
+  level: "block",
+  contentCategories: () => ["flow"],
+})
 
 export const H1 = element<
   React.HTMLAttributes<HTMLHeadingElement>
->("h1", props => <Heading {...props} level={1} />)
+>({
+  name: "h1",
+  level: "block",
+  contentCategories: () => ["flow", "heading"],
+  component: props => <Heading {...props} level={1} />,
+})
 
 export const H2 = element<
   React.HTMLAttributes<HTMLHeadingElement>
->("h2", props => <Heading {...props} level={2} />)
+>({
+  name: "h2",
+  level: "block",
+  contentCategories: () => ["flow", "heading"],
+  component: props => <Heading {...props} level={2} />,
+})
 
 export const H3 = element<
   React.HTMLAttributes<HTMLHeadingElement>
->("h3", props => <Heading {...props} level={3} />)
+>({
+  name: "h3",
+  level: "block",
+  contentCategories: () => ["flow", "heading"],
+  component: props => <Heading {...props} level={3} />,
+})
 
 export const H4 = element<
   React.HTMLAttributes<HTMLHeadingElement>
->("h4", props => <Heading {...props} level={4} />)
+>({
+  name: "h4",
+  level: "block",
+  contentCategories: () => ["flow", "heading"],
+  component: props => <Heading {...props} level={4} />,
+})
 
 export const H5 = element<
   React.HTMLAttributes<HTMLHeadingElement>
->("h5", props => <Heading {...props} level={5} />)
+>({
+  name: "h5",
+  level: "block",
+  contentCategories: () => ["flow", "heading"],
+  component: props => <Heading {...props} level={5} />,
+})
 
 export const H6 = element<
   React.HTMLAttributes<HTMLHeadingElement>
->("h6", props => <Heading {...props} level={6} />)
+>({
+  name: "h6",
+  level: "block",
+  contentCategories: () => ["flow", "heading"],
+  component: props => <Heading {...props} level={6} />,
+})
 
-export const Head = element<React.HTMLAttributes<HTMLHeadElement>>(
-  "head",
-  props => {
+export const Head = element<React.HTMLAttributes<HTMLHeadElement>>({
+  name: "head",
+  level: "block",
+  contentCategories: () => [],
+  component: props => {
     const title = React.useContext(TitleContext)
     return (
       <head {...props}>
         <MetaCharset />
         <MetaViewport />
         <MetaDescription />
-        <title>{ title }</title>
+        <title>{title}</title>
         {props.children}
       </head>
     )
   },
-)
+})
 
 export const Heading: React.FC<HeadingProps> = withLanguage(props => {
   const headingLevel = React.useContext(HeadingLevelContext)
@@ -472,15 +387,29 @@ export const Heading: React.FC<HeadingProps> = withLanguage(props => {
 
 export const Link = element<
   React.LinkHTMLAttributes<HTMLLinkElement>
->("link")
+>({
+  name: "link",
+  level: "block",
+  contentCategories: () => ["metadata"],
+})
 
 export const Main = element<
   React.HTMLAttributes<HTMLElement>
->("main")
+>({
+  name: "main",
+  level: "block",
+  contentCategories: () => ["flow"],
+})
 
 export const Meta = element<
   React.MetaHTMLAttributes<HTMLMetaElement>
->("meta")
+>({
+  name: "meta",
+  level: "block",
+  contentCategories: ({ props }) => props.itemProp
+    ? ["flow", "metadata", "phrasing"]
+    : ["metadata"],
+})
 
 export const MetaCharset: React.FC = () => (
   <Meta charSet="utf-8" />
@@ -507,7 +436,11 @@ export const MetaViewport: React.FC<{
 
 export const Span = element<
   React.HTMLAttributes<HTMLSpanElement>
->("span")
+>({
+  name: "span",
+  level: "inline",
+  contentCategories: () => ["flow", "phrasing"],
+})
 
 export const StylesheetLink: React.FC<{
   href: string
@@ -539,3 +472,119 @@ export const Elements = {
   Span,
   StylesheetLink,
 }
+
+/*
+export type ElementName = "a"
+  | "abbr"
+  | "address"
+  | "area"
+  | "article"
+  | "aside"
+  | "audio"
+  | "b"
+  | "base"
+  | "bdi"
+  | "bdo"
+  | "blockquote"
+  | "body"
+  | "br"
+  | "button"
+  | "canvas"
+  | "caption"
+  | "cite"
+  | "code"
+  | "col"
+  | "colgroup"
+  | "data"
+  | "datalist"
+  | "dd"
+  | "del"
+  | "details"
+  | "dfn"
+  | "dialog"
+  | "div"
+  | "dl"
+  | "dt"
+  | "em"
+  | "embed"
+  | "fieldset"
+  | "figcaption"
+  | "figure"
+  | "footer"
+  | "form"
+  | "h1"
+  | "h2"
+  | "h3"
+  | "h4"
+  | "h5"
+  | "h6"
+  | "head"
+  | "header"
+  | "hgroup"
+  | "hr"
+  | "html"
+  | "i"
+  | "iframe"
+  | "img"
+  | "input"
+  | "ins"
+  | "kbd"
+  | "label"
+  | "legend"
+  | "li"
+  | "link"
+  | "main"
+  | "map"
+  | "mark"
+  | "menu"
+  | "meta"
+  | "meter"
+  | "nav"
+  | "noscript"
+  | "object"
+  | "ol"
+  | "optgroup"
+  | "option"
+  | "output"
+  | "p"
+  | "param"
+  | "picture"
+  | "pre"
+  | "progress"
+  | "q"
+  | "rb"
+  | "rp"
+  | "rt"
+  | "rtc"
+  | "ruby"
+  | "s"
+  | "samp"
+  | "script"
+  | "section"
+  | "select"
+  | "slot"
+  | "small"
+  | "source"
+  | "span"
+  | "strong"
+  | "style"
+  | "sub"
+  | "summary"
+  | "sup"
+  | "table"
+  | "tbody"
+  | "td"
+  | "template"
+  | "tfoot"
+  | "th"
+  | "thead"
+  | "time"
+  | "title"
+  | "tr"
+  | "track"
+  | "u"
+  | "ul"
+  | "var"
+  | "video"
+  | "wbr"
+*/
