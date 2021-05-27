@@ -1,10 +1,17 @@
 import React from "react"
 
+/**
+ * https://developer.mozilla.org/en-US/docs/Web/HTML/Block-level_elements
+ * https://developer.mozilla.org/en-US/docs/Web/HTML/Inline_elements
+ */
 export type ElementLevel =
   | "block"
   | "inline"
   | "undefined"
 
+/**
+ * https://developer.mozilla.org/en-US/docs/Web/HTML/Element
+ */
 export type ElementName = 
   | "a"
   | "body"
@@ -30,6 +37,9 @@ export type ContentCategorizer = ({ props, ancestry }: {
   ancestry: ElementName[],
 }) => ContentCategory[]
 
+/**
+ * https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Content_categories
+ */
 export type ContentCategory =
   | "embedded"
   | "flow"
@@ -40,6 +50,9 @@ export type ContentCategory =
   | "phrasing"
   | "sectioning"
 
+/**
+ * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements
+ */
 export type HeadingLevel =
   | 1
   | 2
