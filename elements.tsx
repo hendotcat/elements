@@ -3,6 +3,7 @@ import React from "react"
 export type ElementLevel =
   | "block"
   | "inline"
+  | "undefined"
 
 export type ElementName = 
   | "a"
@@ -48,7 +49,7 @@ export type HeadingLevel =
   | 6
 
 const ElementLevels: Partial<Record<ElementName, ElementLevel>> = {
-  html: "block",
+  html: "undefined",
 }
 
 const ElementContentCategories: Partial<Record<
@@ -123,12 +124,12 @@ const withElementLevel = (Component, level: ElementLevel) => props => {
 
 function element<Props>({
   name,
-  level,
+  level = "undefined",
   contentCategories,
   component = props => React.createElement(name, props),
 }: {
   name: ElementName,
-  level: ElementLevel,
+  level?: ElementLevel,
   contentCategories: ContentCategorizer,
   component?: (props: Props) => React.ReactElement,
 }): React.FC<Props> {
@@ -329,7 +330,7 @@ export const H6 = element<
 
 export const Head = element<React.HTMLAttributes<HTMLHeadElement>>({
   name: "head",
-  level: "block",
+  level: "undefined",
   contentCategories: () => [],
   component: props => {
     const title = React.useContext(TitleContext)
@@ -372,7 +373,6 @@ export const Link = element<
   React.LinkHTMLAttributes<HTMLLinkElement>
 >({
   name: "link",
-  level: "block",
   contentCategories: () => ["metadata"],
 })
 
@@ -388,7 +388,6 @@ export const Meta = element<
   React.MetaHTMLAttributes<HTMLMetaElement>
 >({
   name: "meta",
-  level: "block",
   contentCategories: ({ props }) => props.itemProp
     ? ["flow", "metadata", "phrasing"]
     : ["metadata"],
