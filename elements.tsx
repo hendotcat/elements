@@ -1,5 +1,9 @@
 import React from "react"
 
+export type ElementLevel =
+  | "block"
+  | "inline"
+
 export type ElementName = 
   | "a"
   | "body"
@@ -20,9 +24,10 @@ export type ElementName =
   | "meta"
   | "span"
 
-const ElementLevels: Partial<Record<ElementName, ElementLevel>> = {}
-
-export type ElementLevel = "block" | "inline"
+export type ContentCategorizer = ({ props, ancestry }: {
+  props: React.HTMLAttributes<HTMLElement>,
+  ancestry: ElementName[],
+}) => ContentCategory[]
 
 export type ContentCategory =
   | "embedded"
@@ -34,40 +39,27 @@ export type ContentCategory =
   | "phrasing"
   | "sectioning"
 
+export type HeadingLevel =
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+
+const ElementLevels: Partial<Record<ElementName, ElementLevel>> = {}
+
 const ElementContentCategories: Partial<Record<
   ElementName,
-  ({ props, ancestry }: {
-    props: React.HTMLAttributes<HTMLElement>,
-    ancestry: ElementName[],
-  }) => ContentCategory[]
+  ContentCategorizer
 >> = {}
-
-export type HeadProps = React.HTMLAttributes<HTMLHeadElement>
-
-/**
- * The <html> tag requires a "lang" property for accessibility reasons.
- *
- * **WCAG Success Criterion 3.1.1: Language of Page (Level A)**
- * > The default human language of each Web page can be programmatically
- * > determined.
- *
- * https://www.w3.org/TR/WCAG21/#language-of-page
- */
-export type DocumentRequirements = "lang" | "title"
-
-export type DocumentProps = React.HTMLAttributes<HTMLHtmlElement>
-  & { description: string }
-  & Required<Pick<HTMLHtmlElement, DocumentRequirements>>
-
-const LanguageContext = React.createContext<React.MutableRefObject<string>>(undefined)
-const TitleContext = React.createContext("")
-const DescriptionContext = React.createContext("")
-
-type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
 
 const AncestryContext = React.createContext<ElementName[]>([])
 const ElementLevelContext = React.createContext<React.MutableRefObject<ElementLevel>>(undefined)
 const HeadingLevelContext = React.createContext<React.MutableRefObject<HeadingLevel>>(undefined)
+const LanguageContext = React.createContext<React.MutableRefObject<string>>(undefined)
+const TitleContext = React.createContext("")
+const DescriptionContext = React.createContext("")
 
 const withAncestry = (Component, name: ElementName) => props => {
   const ancestry = React.useContext(AncestryContext)
@@ -135,66 +127,6 @@ const withElementLevel = (Component, level: ElementLevel) => props => {
   return <Component {...props} />
 }
 
-export type HeadingProps = React.HTMLAttributes<HTMLHeadingElement> & {
-  level?: HeadingLevel
-}
-
-export const Document: React.FC<DocumentProps> = props => {
-  const { title, description,  ...html } = props
-  const children: any = props.children
-  const emptyBody = children === undefined
-  const headAndBody = !emptyBody
-    && children.length === 2
-    && children[0].type === Head
-    && children[1].type === Body 
-  const headOnly = !headAndBody
-    && children?.type === Head
-  const bodyOnly = !headAndBody
-    && children?.type === Body
-  const elementLevelRef = React.useRef("block" as ElementLevel)
-  const headingLevelRef = React.useRef(1 as HeadingLevel)
-  const langRef = React.useRef(props.lang)
-  return (
-    <AncestryContext.Provider value={["html"]}>
-    <ElementLevelContext.Provider value={elementLevelRef}>
-    <HeadingLevelContext.Provider value={headingLevelRef}>
-    <LanguageContext.Provider value={langRef}>
-      <TitleContext.Provider value={title}>
-      <DescriptionContext.Provider value={description}>
-        <html {...html}>
-          {emptyBody ? (
-            <>
-              <Head />
-              <Body>{" "}</Body>
-            </>
-          ) : headAndBody ? (
-            <>{children}</>
-          ) : headOnly ? (
-            <>
-              {props.children}
-              <Body>{" "}</Body>
-            </>
-          ) : bodyOnly ? (
-            <>
-              <Head />
-              {props.children}
-            </>
-          ) : (
-            <>
-              <Head />
-              <Body>{props.children}</Body>
-            </>
-          )}
-        </html>
-      </DescriptionContext.Provider>
-      </TitleContext.Provider>
-    </LanguageContext.Provider>
-    </HeadingLevelContext.Provider>
-    </ElementLevelContext.Provider>
-    </AncestryContext.Provider>
-  )
-}
-
 function element<Props>({
   name,
   level,
@@ -203,10 +135,7 @@ function element<Props>({
 }: {
   name: ElementName,
   level: ElementLevel,
-  contentCategories: ({ props, ancestry }: {
-    props: React.HTMLAttributes<HTMLElement>,
-    ancestry: ElementName[],
-  }) => ContentCategory[],
+  contentCategories: ContentCategorizer,
   component?: (props: Props) => React.ReactElement,
 }): React.FC<Props> {
   ElementLevels[name] = level
@@ -292,6 +221,66 @@ export const Div = element<
   contentCategories: () => ["flow"],
 })
 
+export const Document: React.FC<React.HTMLAttributes<HTMLHtmlElement> & {
+  description: string
+  lang: string
+  title: string
+}> = props => {
+  const { title, description,  ...html } = props
+  const children: any = props.children
+  const emptyBody = children === undefined
+  const headAndBody = !emptyBody
+    && children.length === 2
+    && children[0].type === Head
+    && children[1].type === Body 
+  const headOnly = !headAndBody
+    && children?.type === Head
+  const bodyOnly = !headAndBody
+    && children?.type === Body
+  const elementLevelRef = React.useRef("block" as ElementLevel)
+  const headingLevelRef = React.useRef(1 as HeadingLevel)
+  const langRef = React.useRef(props.lang)
+  return (
+    <AncestryContext.Provider value={["html"]}>
+    <ElementLevelContext.Provider value={elementLevelRef}>
+    <HeadingLevelContext.Provider value={headingLevelRef}>
+    <LanguageContext.Provider value={langRef}>
+      <TitleContext.Provider value={title}>
+      <DescriptionContext.Provider value={description}>
+        <html {...html}>
+          {emptyBody ? (
+            <>
+              <Head />
+              <Body>{" "}</Body>
+            </>
+          ) : headAndBody ? (
+            <>{children}</>
+          ) : headOnly ? (
+            <>
+              {props.children}
+              <Body>{" "}</Body>
+            </>
+          ) : bodyOnly ? (
+            <>
+              <Head />
+              {props.children}
+            </>
+          ) : (
+            <>
+              <Head />
+              <Body>{props.children}</Body>
+            </>
+          )}
+        </html>
+      </DescriptionContext.Provider>
+      </TitleContext.Provider>
+    </LanguageContext.Provider>
+    </HeadingLevelContext.Provider>
+    </ElementLevelContext.Provider>
+    </AncestryContext.Provider>
+  )
+}
+
 export const H1 = element<
   React.HTMLAttributes<HTMLHeadingElement>
 >({
@@ -364,7 +353,9 @@ export const Head = element<React.HTMLAttributes<HTMLHeadElement>>({
   },
 })
 
-export const Heading: React.FC<HeadingProps> = withLanguage(props => {
+export const Heading: React.FC<React.HTMLAttributes<HTMLHeadingElement> & {
+  level?: HeadingLevel
+}> = withLanguage(props => {
   const headingLevel = React.useContext(HeadingLevelContext)
 
   const {
