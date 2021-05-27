@@ -16,6 +16,7 @@ export type ElementName =
   | "head"
   | "html"
   | "link"
+  | "main"
   | "meta"
   | "span"
 
@@ -35,6 +36,7 @@ const ElementLevels: Record<ElementName, ElementLevel> = {
   head: "block",
   html: "block",
   link: "block",
+  main: "block",
   meta: "block",
   span: "inline",
 }
@@ -157,6 +159,45 @@ export type ElementName = "a"
 
 export type ElementLevel = "block" | "inline"
 
+export type ContentCategory =
+  | "embedded"
+  | "flow"
+  | "form-associated"
+  | "heading"
+  | "interactive"
+  | "metadata"
+  | "phrasing"
+  | "sectioning"
+
+const ElementContentCategories: Record<
+  ElementName,
+  ({ props, ancestry }: {
+    props: React.HTMLAttributes<HTMLElement>,
+    ancestry: ElementName[],
+  }) => ContentCategory[]
+> = {
+  a: () => ["flow", "phrasing"],
+  body: () => [],
+  dd: () => ["flow"],
+  dl: () => ["flow"],
+  dt: () => ["flow"],
+  div: () => ["flow"],
+  h1: () => ["flow", "heading"],
+  h2: () => ["flow", "heading"],
+  h3: () => ["flow", "heading"],
+  h4: () => ["flow", "heading"],
+  h5: () => ["flow", "heading"],
+  h6: () => ["flow", "heading"],
+  head: () => [],
+  html: () => [],
+  link: () => ["metadata"],
+  main: () => ["flow"],
+  meta: ({ props }) => props.itemProp
+    ? ["flow", "metadata", "phrasing"]
+    : ["metadata"],
+  span: () => ["flow", "phrasing"],
+}
+
 export type HeadProps = React.HTMLAttributes<HTMLHeadElement>
 
 /**
@@ -180,38 +221,48 @@ const DescriptionContext = React.createContext("")
 
 type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
 
+const AncestryContext = React.createContext<ElementName[]>([])
 const ElementLevelContext = React.createContext<React.MutableRefObject<ElementLevel>>(undefined)
 const HeadingLevelContext = React.createContext<React.MutableRefObject<HeadingLevel>>(undefined)
 
-function HeadingLevelProvider({ children }): React.ReactElement {
-  const level = React.useRef(1 as HeadingLevel)
-  return (
-    <HeadingLevelContext.Provider value={level}>
-      {children}
-    </HeadingLevelContext.Provider>
-  )
-}
+const withAncestry = (Component, name: ElementName) => props => {
+  const ancestry = React.useContext(AncestryContext)
+  const { children, ...rest } = props
+  
+  const contentCategories = ElementContentCategories[name]({ props, ancestry })
 
-function LanguageProvider({ children, lang }): React.ReactElement {
-  const langRef = React.useRef(lang)
-  return (
-    <LanguageContext.Provider value={langRef}>
-      {children}
-    </LanguageContext.Provider>
-  )
+  if (ancestry.includes("body") && !contentCategories.includes("flow")) {
+    throw new Error("Cannot render non-flow content inside <body>")
+  }
+
+  if (ancestry.includes("head") && !contentCategories.includes("metadata")) {
+    throw new Error("Cannot render flow content inside <head>")
+  }
+
+  if (children) {
+    return (
+      <Component {...rest}>
+        <AncestryContext.Provider value={[...ancestry, name]}>
+          {children}
+        </AncestryContext.Provider>
+      </Component>
+    )
+  }
+  return <Component {...props} />
 }
 
 const withLanguage = Component => props => {
   const parentLanguage = React.useContext(LanguageContext)
   const { lang, children, ...rest } = props
+  const langRef = React.useRef(lang)
   if (!lang || lang === parentLanguage.current) {
     return <Component {...rest} children={children} />
   } else if (children) {
     return (
       <Component {...rest} lang={lang}>
-        <LanguageProvider lang={lang}>
+        <LanguageContext.Provider value={langRef}>
           {children}
-        </LanguageProvider>
+        </LanguageContext.Provider>
       </Component>
     )
   } else {
@@ -219,24 +270,16 @@ const withLanguage = Component => props => {
   }
 }
 
-function ElementLevelProvider({ children, elementLevel = "block" }): React.ReactElement {
-  const ref = React.useRef(elementLevel as ElementLevel)
-  return (
-    <ElementLevelContext.Provider value={ref}>
-      {children}
-    </ElementLevelContext.Provider>
-  )
-}
-
 const withElementLevel = (Component, level: ElementLevel) => props => {
   const parentLevel = React.useContext(ElementLevelContext)
   const { children, ...rest } = props
+  const ref = React.useRef(level as ElementLevel)
   if (parentLevel?.current === "block" && level === "inline") {
     return (
       <Component {...rest}>
-        <ElementLevelProvider elementLevel={level}>
+        <ElementLevelContext.Provider value={ref}>
           {children}
-        </ElementLevelProvider>
+        </ElementLevelContext.Provider>
       </Component>
     )
   }
@@ -264,10 +307,14 @@ export const Document: React.FC<DocumentProps> = props => {
     && children?.type === Head
   const bodyOnly = !headAndBody
     && children?.type === Body
+  const elementLevelRef = React.useRef("block" as ElementLevel)
+  const headingLevelRef = React.useRef(1 as HeadingLevel)
+  const langRef = React.useRef(props.lang)
   return (
-    <ElementLevelProvider>
-    <HeadingLevelProvider>
-    <LanguageProvider lang={props.lang}>
+    <AncestryContext.Provider value={["html"]}>
+    <ElementLevelContext.Provider value={elementLevelRef}>
+    <HeadingLevelContext.Provider value={headingLevelRef}>
+    <LanguageContext.Provider value={langRef}>
       <TitleContext.Provider value={title}>
       <DescriptionContext.Provider value={description}>
         <html {...html}>
@@ -297,9 +344,10 @@ export const Document: React.FC<DocumentProps> = props => {
         </html>
       </DescriptionContext.Provider>
       </TitleContext.Provider>
-    </LanguageProvider>
-    </HeadingLevelProvider>
-    </ElementLevelProvider>
+    </LanguageContext.Provider>
+    </HeadingLevelContext.Provider>
+    </ElementLevelContext.Provider>
+    </AncestryContext.Provider>
   )
 }
 
@@ -309,6 +357,7 @@ function element<Props>(
     return <Name {...props} />
   },
 ): React.FC<Props> {
+  component = withAncestry(component, Name)
   component = withElementLevel(component, ElementLevels[Name])
   component = withLanguage(component)
   return component
@@ -425,6 +474,10 @@ export const Link = element<
   React.LinkHTMLAttributes<HTMLLinkElement>
 >("link")
 
+export const Main = element<
+  React.HTMLAttributes<HTMLElement>
+>("main")
+
 export const Meta = element<
   React.MetaHTMLAttributes<HTMLMetaElement>
 >("meta")
@@ -459,3 +512,30 @@ export const Span = element<
 export const StylesheetLink: React.FC<{
   href: string
 }> = ({ href }) => <Link rel="stylesheet" href={href} />
+
+export const Elements = {
+  Anchor,
+  Body,
+  CanonicalLink,
+  DescriptionDetails,
+  DescriptionList,
+  DescriptionTerm,
+  Div,
+  Document,
+  H1,
+  H2,
+  H3,
+  H4,
+  H5,
+  H6,
+  Head,
+  Heading,
+  Link,
+  Main,
+  Meta,
+  MetaCharset,
+  MetaDescription,
+  MetaViewport,
+  Span,
+  StylesheetLink,
+}

@@ -2,8 +2,13 @@
 
 exports[`@hendotcat/elements <DescriptionList /> renders a list of links with descriptions 1`] = `
 "
-<html>
-  <head></head>
+<html lang=\\"en-US\\">
+  <head>
+    <meta charset=\\"utf-8\\">
+    <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1\\">
+    <meta name=\\"description\\" content=\\"testing\\">
+    <title>test</title>
+  </head>
   <body>
     <dl>
       <dt><a href=\\"https://example.org/\\">link</a></dt>

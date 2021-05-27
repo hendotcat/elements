@@ -19,6 +19,7 @@ import {
   Head,
   Heading,
   Link,
+  Main,
   Meta,
   MetaCharset,
   MetaDescription,
@@ -48,19 +49,39 @@ describe(name, () => {
   describe("<Anchor />", () => {
     it("renders a link", async () => {
       const html = render(
-        <Anchor href="https://example.org/">
-          click here
-        </Anchor>
+        <Document lang="en-US" title="test" description="testing">
+          <Anchor href="https://example.org/">
+            click here
+          </Anchor>
+        </Document>
       )
       const tree = parse(html)
       const tag = select("a[href='https://example.org/']", tree)
       expect(tag.children[0].value).toBe("click here")
     })
+
+    it("cannot render inside <head>", async () => {
+      expect(() => render(
+        <Document lang="en-US" title="test" description="testing">
+          <Head>
+            <Anchor href="https://example.org/">
+              click here
+            </Anchor>
+          </Head>
+        </Document>
+      )).toThrowError()
+    })
   })
 
   describe("<CanonicalLink />", () => {
     it("sets the canonical URL", async () => {
-      const html = render(<CanonicalLink href="https://example.org" />)
+      const html = render(
+        <Document lang="en-US" title="test" description="testing">
+          <Head>
+            <CanonicalLink href="https://example.org" />
+          </Head>
+        </Document>
+      )
       const tree = parse(html)
       const tag = select("link[rel=canonical]", tree)
       expect(tag.properties.href).toBe("https://example.org")
@@ -69,7 +90,13 @@ describe(name, () => {
 
   describe("<DescriptionDetails />", () => {
     it("renders a <dd> tag", async () => {
-      const html = render(<DescriptionDetails>abc</DescriptionDetails>)
+      const html = render(
+        <Document lang="en-US" title="test" description="testing">
+          <Body>
+            <DescriptionDetails>abc</DescriptionDetails>
+          </Body>
+        </Document>
+      )
       const tree = parse(html)
       const tag = select("dd", tree)
       expect(tag.children[0].value).toBe("abc")
@@ -78,7 +105,11 @@ describe(name, () => {
 
   describe("<DescriptionList />", () => {
     it("renders a <dl> tag", async () => {
-      const html = render(<DescriptionList>abc</DescriptionList>)
+      const html = render(
+        <Document lang="en-US" title="test" description="testing">
+          <DescriptionList>abc</DescriptionList>
+        </Document>
+      )
       const tree = parse(html)
       const tag = select("dl", tree)
       expect(tag.children[0].value).toBe("abc")
@@ -86,10 +117,12 @@ describe(name, () => {
 
     it("renders a list of links with descriptions", async () => {
       const html = render(
-        <DescriptionList items={[[
-          <Anchor href="https://example.org/">link</Anchor>,
-          <Span>an example website</Span>,
-        ]]} />
+        <Document lang="en-US" title="test" description="testing">
+          <DescriptionList items={[[
+            <Anchor href="https://example.org/">link</Anchor>,
+            <Span>an example website</Span>,
+          ]]} />
+        </Document>
       )
       expect(html).toMatchSnapshot()
     })
@@ -97,7 +130,11 @@ describe(name, () => {
 
   describe("<DescriptionTerm />", () => {
     it("renders a <dt> tag", async () => {
-      const html = render(<DescriptionTerm>abc</DescriptionTerm>)
+      const html = render(
+        <Document lang="en-US" title="test" description="testing">
+          <DescriptionTerm>abc</DescriptionTerm>
+        </Document>
+      )
       const tree = parse(html)
       const tag = select("dt", tree)
       expect(tag.children[0].value).toBe("abc")
@@ -106,7 +143,11 @@ describe(name, () => {
 
   describe("<Div />", () => {
     it("renders a <div> tag", async () => {
-      const html = render(<Div />)
+      const html = render(
+        <Document lang="en-US" title="test" description="testing">
+          <Div />
+        </Document>
+      )
       const tree = parse(html)
       const tag = select("div", tree)
       expect(tag).toBeTruthy()
@@ -260,25 +301,86 @@ describe(name, () => {
 
   describe("<Link />", () => {
     it("renders a <link> tag", async () => {
-      const html = render(<Link rel="stylesheet" href="style.css" />)
+      const html = render(
+        <Document lang="en-US" title="test" description="testing">
+          <Head>
+            <Link rel="stylesheet" href="style.css" />
+          </Head>
+        </Document>
+      )
       const tree = parse(html)
       const tag = select("link[rel='stylesheet'][href='style.css']", tree)
+      expect(tag).toBeTruthy()
+    })
+
+    it("cannot render inside <body>", async () => {
+      expect(() => render(
+        <Document lang="en-US" title="test" description="testing">
+          <Body>
+            <Link rel="stylesheet" href="style.css" />
+          </Body>
+        </Document>
+      )).toThrowError()
+    })
+  })
+
+  describe("<Main />", () => {
+    it("renders a <div> tag", async () => {
+      const html = render(
+        <Document lang="en-US" title="test" description="testing">
+          <Main />
+        </Document>
+      )
+      const tree = parse(html)
+      const tag = select("main", tree)
       expect(tag).toBeTruthy()
     })
   })
 
   describe("<Meta />", () => {
     it("renders a <meta> tag", async () => {
-      const html = render(<Meta name="og:title" content="hello" />)
+      const html = render(
+        <Document lang="en-US" title="test" description="testing">
+          <Head>
+            <Meta name="og:title" content="hello" />
+          </Head>
+        </Document>
+      )
       const tree = parse(html)
       const tag = select("meta[name='og:title']", tree)
       expect(tag.properties.content).toBe("hello")
+    })
+
+    it("cannot be rendered inside <body>", async () => {
+      expect(() => render(
+        <Document lang="en-US" title="test" description="testing">
+          <Body>
+            <Meta name="og:title" content="hello" />
+          </Body>
+        </Document>
+      )).toThrowError()
+    })
+
+    it("can render inside <body> when itemProp is present", async () => {
+      expect(() => render(
+        <Document lang="en-US" title="test" description="testing">
+          <Body>
+            <Meta itemProp="name" content="The Castle" />
+          </Body>
+        </Document>
+      )).not.toThrowError()
     })
   })
 
   describe("<MetaCharset />", () => {
     it("sets the charset to utf8", async () => {
-      const html = render(<MetaCharset />)
+      const html = render(
+        <Document lang="en-US" title="test" description="testing">
+          <Head>
+            <MetaCharset />
+          </Head>
+        </Document>
+      )
       const tree = parse(html)
       const tag = select("meta[charset='utf-8']", tree)
       expect(tag).toBeTruthy()
@@ -287,16 +389,24 @@ describe(name, () => {
 
   describe("<MetaDescription />", () => {
     it("renders the SEO description", async () => {
-      const html = render(<MetaDescription description="test" />)
+      const html = render(
+        <Document lang="en-US" title="test" description="testing" />
+      )
       const tree = parse(html)
       const tag = select("meta[name='description']", tree)
-      expect(tag.properties.content).toBe("test")
+      expect(tag.properties.content).toBe("testing")
     })
   })
 
   describe("<MetaViewport />", () => {
     it("sets the usual responsive defaults", async () => {
-      const html = render(<MetaViewport />)
+      const html = render(
+        <Document lang="en-US" title="test" description="testing">
+          <Head>
+            <MetaViewport />
+          </Head>
+        </Document>
+      )
       const tree = parse(html)
       const tag = select("meta[name='viewport']", tree)
       expect(tag.properties.content).toBe("width=device-width, initial-scale=1")
@@ -305,7 +415,11 @@ describe(name, () => {
 
   describe("<Span />", () => {
     it("renders a <span> tag", async () => {
-      const html = render(<Span />)
+      const html = render(
+        <Document lang="en-US" title="test" description="testing">
+          <Span />
+        </Document>
+      )
       const tree = parse(html)
       const tag = select("span", tree)
       expect(tag).toBeTruthy()
@@ -314,7 +428,13 @@ describe(name, () => {
 
   describe("<StylesheetLink />", () => {
     it("links to a stylesheet", async () => {
-      const html = render(<StylesheetLink href="style.css" />)
+      const html = render(
+        <Document lang="en-US" title="test" description="testing">
+          <Head>
+            <StylesheetLink href="style.css" />
+          </Head>
+        </Document>
+      )
       const tree = parse(html)
       const tag = select("link[rel=stylesheet]", tree)
       expect(tag.properties.href).toBe("style.css")
