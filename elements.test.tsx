@@ -281,7 +281,7 @@ describe(name, () => {
     })
   })
 
-  describe("<LevelProvider />", () => {
+  describe("withElementLevel()", () => {
     it("allows inline elements inside block elements", () => {
       expect(() => render(
         <Document lang="en-US" title="test" description="testing">

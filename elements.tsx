@@ -47,15 +47,18 @@ export type HeadingLevel =
   | 5
   | 6
 
-const ElementLevels: Partial<Record<ElementName, ElementLevel>> = {}
+const ElementLevels: Partial<Record<ElementName, ElementLevel>> = {
+  html: "block",
+}
 
 const ElementContentCategories: Partial<Record<
   ElementName,
   ContentCategorizer
->> = {}
+>> = {
+  html: () => [],
+}
 
 const AncestryContext = React.createContext<ElementName[]>([])
-const ElementLevelContext = React.createContext<React.MutableRefObject<ElementLevel>>(undefined)
 const HeadingLevelContext = React.createContext<React.MutableRefObject<HeadingLevel>>(undefined)
 const LanguageContext = React.createContext<React.MutableRefObject<string>>(undefined)
 const TitleContext = React.createContext("")
@@ -107,20 +110,11 @@ const withLanguage = Component => props => {
 }
 
 const withElementLevel = (Component, level: ElementLevel) => props => {
-  const parentLevel = React.useContext(ElementLevelContext)
-  const { children, ...rest } = props
-  const ref = React.useRef(level as ElementLevel)
-  if (parentLevel?.current === "block" && level === "inline") {
-    return (
-      <Component {...rest}>
-        <ElementLevelContext.Provider value={ref}>
-          {children}
-        </ElementLevelContext.Provider>
-      </Component>
-    )
-  }
+  const ancestry = React.useContext(AncestryContext)
+  const parentName = ancestry[ancestry.length - 1]
+  const parentLevel = ElementLevels[parentName]
 
-  if (parentLevel?.current === "inline" && level === "block") {
+  if (parentLevel === "inline" && level === "block") {
     throw new Error("Block element not allowed as child of inline element")
   }
 
@@ -242,7 +236,6 @@ export const Document: React.FC<React.HTMLAttributes<HTMLHtmlElement> & {
   const langRef = React.useRef(props.lang)
   return (
     <AncestryContext.Provider value={["html"]}>
-    <ElementLevelContext.Provider value={elementLevelRef}>
     <HeadingLevelContext.Provider value={headingLevelRef}>
     <LanguageContext.Provider value={langRef}>
       <TitleContext.Provider value={title}>
@@ -276,7 +269,6 @@ export const Document: React.FC<React.HTMLAttributes<HTMLHtmlElement> & {
       </TitleContext.Provider>
     </LanguageContext.Provider>
     </HeadingLevelContext.Provider>
-    </ElementLevelContext.Provider>
     </AncestryContext.Provider>
   )
 }
