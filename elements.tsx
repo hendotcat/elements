@@ -26,7 +26,9 @@ export type ElementName =
   | "h5"
   | "h6"
   | "head"
+  | "header"
   | "html"
+  | "footer"
   | "link"
   | "main"
   | "meta"
@@ -359,6 +361,14 @@ export const Head = element<React.HTMLAttributes<HTMLHeadElement>>({
   },
 })
 
+export const Header = element<
+  React.HTMLAttributes<HTMLElement>
+>({
+  name: "header",
+  level: "block",
+  contentCategories: () => ["flow"],
+})
+
 export const Heading: React.FC<React.HTMLAttributes<HTMLHeadingElement> & {
   level?: HeadingLevel
 }> = withLanguage(props => {
@@ -380,6 +390,14 @@ export const Heading: React.FC<React.HTMLAttributes<HTMLHeadingElement> & {
   headingLevel.current = level
   const Element = `h${level}`
   return <Element {...heading} />
+})
+
+export const Footer = element<
+  React.HTMLAttributes<HTMLElement>
+>({
+  name: "footer",
+  level: "block",
+  contentCategories: () => ["flow"],
 })
 
 export const Link = element<
@@ -505,7 +523,6 @@ export type ElementName = "a"
   | "fieldset"
   | "figcaption"
   | "figure"
-  | "footer"
   | "form"
   | "h1"
   | "h2"
@@ -514,7 +531,6 @@ export type ElementName = "a"
   | "h5"
   | "h6"
   | "head"
-  | "header"
   | "hgroup"
   | "hr"
   | "html"
