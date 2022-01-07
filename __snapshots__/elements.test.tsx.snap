@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`@hendotcat/elements <DescriptionList /> renders a list of links with descriptions 1`] = `
+exports[`@henrycatalinismith/elements <DescriptionList /> renders a list of links with descriptions 1`] = `
 "
 <html lang=\\"en-US\\">
   <head>
@@ -19,7 +19,7 @@ exports[`@hendotcat/elements <DescriptionList /> renders a list of links with de
 "
 `;
 
-exports[`@hendotcat/elements <Document /> renders <Body> children as body contents 1`] = `
+exports[`@henrycatalinismith/elements <Document /> renders <Body> children as body contents 1`] = `
 "
 <html lang=\\"en-US\\">
   <head>
@@ -35,7 +35,7 @@ exports[`@hendotcat/elements <Document /> renders <Body> children as body conten
 "
 `;
 
-exports[`@hendotcat/elements <Document /> renders a valid document given the bare minimum input 1`] = `
+exports[`@henrycatalinismith/elements <Document /> renders a valid document given the bare minimum input 1`] = `
 "
 <html lang=\\"en-US\\">
   <head>
@@ -49,7 +49,7 @@ exports[`@hendotcat/elements <Document /> renders a valid document given the bar
 "
 `;
 
-exports[`@hendotcat/elements <Document /> renders custom header metadata 1`] = `
+exports[`@henrycatalinismith/elements <Document /> renders custom header metadata 1`] = `
 "
 <html lang=\\"en-US\\">
   <head>
@@ -64,7 +64,7 @@ exports[`@hendotcat/elements <Document /> renders custom header metadata 1`] = `
 "
 `;
 
-exports[`@hendotcat/elements <Document /> treats bare children as body contents 1`] = `
+exports[`@henrycatalinismith/elements <Document /> treats bare children as body contents 1`] = `
 "
 <html lang=\\"en-US\\">
   <head>
@@ -80,7 +80,7 @@ exports[`@hendotcat/elements <Document /> treats bare children as body contents 
 "
 `;
 
-exports[`@hendotcat/elements <H1 /> renders a <h1> 1`] = `
+exports[`@henrycatalinismith/elements <H1 /> renders a <h1> 1`] = `
 "
 <html lang=\\"en-US\\">
   <head>
@@ -96,7 +96,7 @@ exports[`@hendotcat/elements <H1 /> renders a <h1> 1`] = `
 "
 `;
 
-exports[`@hendotcat/elements <Heading /> allows heading level changes of up to 1 1`] = `
+exports[`@henrycatalinismith/elements <Heading /> allows heading level changes of up to 1 1`] = `
 "
 <html lang=\\"en-US\\">
   <head>
@@ -122,9 +122,9 @@ exports[`@hendotcat/elements <Heading /> allows heading level changes of up to 1
 "
 `;
 
-exports[`@hendotcat/elements <Heading /> rejects heading level changes of more than 1 1`] = `"Heading level 3 not allowed: previous level is 1"`;
+exports[`@henrycatalinismith/elements <Heading /> rejects heading level changes of more than 1 1`] = `"Heading level 3 not allowed: previous level is 1"`;
 
-exports[`@hendotcat/elements <Heading /> renders a <h1> by default 1`] = `
+exports[`@henrycatalinismith/elements <Heading /> renders a <h1> by default 1`] = `
 "
 <html lang=\\"en-US\\">
   <head>

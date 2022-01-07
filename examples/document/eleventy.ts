@@ -1,5 +1,5 @@
-import { rehypePlugin } from "@hendotcat/11tyhype"
-import { reactPlugin } from "@hendotcat/11tysnap"
+import { rehypePlugin } from "@henrycatalinismith/11tyhype"
+import { reactPlugin } from "@henrycatalinismith/11tysnap"
 import format from "rehype-format"
 
 module.exports = function(eleventyConfig) {

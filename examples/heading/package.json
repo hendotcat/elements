@@ -1,8 +1,8 @@
 {
   "dependencies": {
     "@11ty/eleventy": "^0.12.1",
-    "@hendotcat/11tyhype": "^2.0.0",
-    "@hendotcat/11tysnap": "^0.0.11",
+    "@henrycatalinismith/11tyhype": "^2.0.0",
+    "@henrycatalinismith/11tysnap": "^0.0.11",
     "@types/node": "^15.6.0",
     "@types/react": "^17.0.6",
     "react": "^17.0.2",

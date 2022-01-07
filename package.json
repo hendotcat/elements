@@ -1,12 +1,12 @@
 {
-  "name": "@hendotcat/elements",
+  "name": "@henrycatalinismith/elements",
   "description": "React component library",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "license": "MIT",
   "homepage": "https://github.com/henrycatalinismith/elements",
   "author": {
     "name": "Henry Catalini Smith",
-    "email": "smith@hen.cat",
+    "email": "henry@catalinismith.com",
     "url": "https://hen.cat/"
   },
   "repository": {
