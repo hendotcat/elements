@@ -1,7 +1,7 @@
 <p align="center">
   <img
     alt="11tysass"
-    src="https://github.com/hendotcat/elements/raw/trunk/elements.svg"
+    src="https://github.com/henrycatalinismith/elements/raw/trunk/elements.svg"
     height="64"
   />
 </p>
@@ -14,7 +14,7 @@
 
 <p align="center">
   <img
-    src="https://github.com/hendotcat/elements/actions/workflows/publish.yml/badge.svg"
+    src="https://github.com/henrycatalinismith/elements/actions/workflows/publish.yml/badge.svg"
     alt="Build status"
   />
 </p>
